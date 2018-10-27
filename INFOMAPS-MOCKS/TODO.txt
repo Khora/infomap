@@ -1,0 +1,7 @@
+i18n!
+
+wochentage i18n -> translation service
+
+what must go into help content?
+
+nur die aktuell sichtbaren togglen

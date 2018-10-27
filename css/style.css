@@ -1,0 +1,140 @@
+body {
+    font-family: verdana, arial, sans-serif;
+    margin: 5px;
+}
+#logo {
+    position: absolute;
+    top: 20px;
+    left: 12.5%;
+    width: 200px;
+    height: 190px;
+}
+#title {
+    position: absolute;
+    top: 40px;
+    left: calc(12.5% + 200px);
+    height: 160px;
+    width: 300px;
+}
+#menuArea {
+    position: absolute;
+    top: 0px;
+    left: calc(50% + 300px);
+    height: 200px;
+    width: 435px;
+}
+#shadow {
+    position: absolute;
+    top: 180px;
+    left: 0px;
+    width: 100%;
+    height: 5px;
+    background-image: url("../img/shadow.png");
+    background-repeat: repeat;
+}
+#languages {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+#searchImage {
+    position: absolute;
+    top: 230px;
+    left: 10px;
+}
+#search {
+    position: absolute;
+    top: 230px;
+    left: 70px;
+    width: calc(100% - 150px);
+}
+#searchGo {
+    position: absolute;
+    top: 230px;
+    right: 10px;
+}
+#infomapSearch {
+    font-size: 30px;
+    height: 50px;
+    width: 100%;
+}
+#backArrowImage {
+    position: absolute;
+    top: 230px;
+    left: 50px;
+}
+#content {
+    position: absolute;
+    top: 330px;
+    width: calc(100% - 20px);
+}
+#buttonRoundedEdges {
+    display: table;
+    height: 30px;
+    padding-top: 2px;
+    padding-bottom: -8px;
+    padding-left: 3px;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #555555;
+    box-shadow: 0 0 2px gray;
+    opacity: 0.5;
+    -o-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+    font-weight: bold;
+}
+#buttonRoundedEdges:hover {
+    opacity: 1;
+    background: #f9f9f9;
+}
+#buttonRoundedEdgesText {
+    margin-top: -25px;
+    margin-left: 35px;
+}
+#socialNetworkButton {
+    display: table;
+    height: 14px;
+    opacity: 0.5;
+    -o-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-webkit-transition: 0.2s;
+	transition: 0.2s;
+}
+#socialNetworkButton:hover {
+    opacity: 1;
+    background: #f9f9f9;
+}
+table.gridtable {
+    font-family: verdana, arial, sans-serif;
+    font-size:20px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #666666;
+    border-collapse: collapse;
+}
+table.gridtable th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    color: #ffffff;
+    background-color: #555555;
+}
+table.gridtable td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #666666;
+    background-color: #ffffff;
+}
+.right {
+    float: right;
+}
+.left {
+    float: left;
+}
