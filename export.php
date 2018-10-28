@@ -11,9 +11,9 @@ class PDF extends tFPDF
         // Page header
         global $title;
 
-        $this->SetFont('DejaVu','',14);
+        $this->SetFont('DejaVu','',12);
         $w = $this->GetStringWidth($title) + 6;
-        $this->SetX((210 - $w) / 2);
+        $this->SetX((300 - $w) / 2);
         $this->SetDrawColor(0, 0, 0);
         $this->SetFillColor(230, 230, 230);
         $this->SetTextColor(0, 0, 0);
@@ -27,7 +27,7 @@ class PDF extends tFPDF
     function Footer() {
         // Page footer
         $this->SetY(-15);
-        $this->SetFont('DejaVu','',14);
+        $this->SetFont('DejaVu','',12);
         $this->SetTextColor(128);
         $this->Cell(0, 10, $this->PageNo() . '/{nb}', 0, 0, 'C');
     }
@@ -59,7 +59,7 @@ class PDF extends tFPDF
 
     function ChapterTitle($num, $label) {
         // Title
-        $this->SetFont('DejaVu','',14);
+        $this->SetFont('DejaVu','',12);
         $this->SetFillColor(230, 230, 230);
         $this->Cell(0, 6, "$num: $label", 0, 1 ,'L', true);
         $this->Ln(4);
@@ -70,19 +70,19 @@ class PDF extends tFPDF
     function ChapterBody($txt) {
         // Read text file
         // Font
-        $this->SetFont('DejaVu','',14);
+        $this->SetFont('DejaVu','',12);
         // Output text in a 6 cm width column
         $this->MultiCell(60, 5, $txt);
         $this->Ln();
         // Mention
-        $this->SetFont('DejaVu','',14);
+        $this->SetFont('DejaVu','',12);
         // Go back to first column
         $this->SetCol(0);
     }
 
     function PrintChapter($num, $title, $txt) {
         // Add chapter
-        $this->AddPage();
+        $this->AddPage("L");
         $this->ChapterTitle($num, $title);
         $this->ChapterBody($txt);
         
@@ -100,7 +100,13 @@ class PDF extends tFPDF
 /*
  *Gets the content that can be put in a PDF export file
  */
-function getInfomapContent($language, $spreadsheetUrl) {
+function getInfomapContent($language, $spreadsheetUrl, $idsString) {
+    // which shall be exported? if empty, export all
+    $idsToExport = array();
+    if (isset($idsString) && strcmp($idsString, "") != 0) {
+        $idsToExport = explode(',', $idsString);
+    }
+    
     // how many columns do we want to present in the list?
     $previewCount = 6;
     
@@ -111,11 +117,16 @@ function getInfomapContent($language, $spreadsheetUrl) {
     // construct a string with the given information
     $retVal = "";
     for ($i = 1; $i < count($data); $i++) {
-        for ($j = 0; $j < $previewCount; $j++) {
-            //$retVal = $retVal . "Γειά σου κόσμο     المفاتيح العرب";
-            $retVal = $retVal . getOrDefault($data, $dataEnglish, $i, $j) . "\n";
+        if (count($idsToExport) == 0 || in_array(strval($i), $idsToExport)) {
+            for ($j = 0; $j < $previewCount; $j++) {
+                if ($j == 0) {
+                    $retVal = $retVal . getOrDefault($data, $dataEnglish, $i, $j) . ". ";
+                } else {
+                    $retVal = $retVal . getOrDefault($data, $dataEnglish, $i, $j) . "\n";
+                }
+            }
+            $retVal = $retVal . "\n";      
         }
-        $retVal = $retVal . "\n";
     }
     return $retVal;
 }
@@ -128,7 +139,13 @@ $title = 'Khora Infomap';
 $pdf->SetTitle($title);
 $pdf->AliasNbPages();
 $pdf->SetAuthor('InfoMap');
-$infomapContent = getInfomapContent($_SESSION["language"], $_SESSION["spreadsheetUrl" . $_SESSION["language"]]);
+
+$idsToExportString = "";
+if (isset($_GET["ids"]) && strcmp($_GET["ids"], "") != 0) {
+    $idsToExportString = htmlspecialchars($_GET["ids"]);
+}
+    
+$infomapContent = getInfomapContent($_SESSION["language"], $_SESSION["spreadsheetUrl" . $_SESSION["language"]], $idsToExportString);
 $pdf->PrintChapter(1, 'INFOMAP_EXAMPLE', $infomapContent);
 $pdf->Output();
 ?>

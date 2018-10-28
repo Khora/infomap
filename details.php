@@ -12,13 +12,13 @@
     </head>
     <body>
         <?php
-            $headerText = i18n("Details");
+            $headerText = i18n("details");
             $id = -1;
             if (!isset($_GET["id"])) {
-                $headerText = i18n("Details - Error, no ID specified!");
+                $headerText = i18n("detailsError");
             } else {
                 $id = htmlspecialchars($_GET["id"]);
-                $headerText = i18n("Details") . "&nbsp;-&nbsp;ID:&nbsp;" . $id;
+                $headerText = i18n("details") . "&nbsp;-&nbsp;ID:&nbsp;" . $id;
             }
             echo getTopArea($headerText);
             
@@ -31,12 +31,12 @@
                             " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
                         </td>
                         <td id=\"favoriteStar\" style='padding: 10px; padding-left: 25mm; font-size: 8mm; font-weight: bold;'>
-                            " . i18n("Favorite") . ":&nbsp;<img src='img/starActive.png'>
+                            " . i18n("favorite") . ":&nbsp;<img src='img/starActive.png'>
                         </td>
                     </table>
                     <script>
                         if (getFavorites().indexOf(" . $id . ") < 0) {
-                            document.getElementById(\"favoriteStar\").innerHTML = \"" . i18n("Favorite") . ":&nbsp;<img src='img/starInactive.png'>\";
+                            document.getElementById(\"favoriteStar\").innerHTML = \"" . i18n("favorite") . ":&nbsp;<img src='img/starInactive.png'>\";
                         }
                     </script>";
                 
@@ -50,64 +50,64 @@
                     
                     echo "<table id='table' class='gridtable' style='margin: 5mm; width: calc(100% - 10mm);'>
                         <tr>
-                            <th>ID</th>
+                            <th>" . i18n("id") . "</th>
                             <th>" . $id . "</th>
                         <tr>
                         <tr>
-                            <td>Category</td>
+                            <td>" . i18n("category") . "</td>
                             <td>" . $details['category'] . "</td>
                         <tr>
                         <tr>
-                            <td>Name</td>
+                            <td>" . i18n("name") . "</td>
                             <td>" . $details['name'] . "</td>
                         <tr>
                         <tr>
-                            <td>Opening Hours</td>
+                            <td>" . i18n("openingHours") . "</td>
                             <td>" . $details['openingHours'] . "</td>
                         <tr>
                         <tr>
-                            <td>Address</td>
+                            <td>" . i18n("address") . "</td>
                             <td><a href='https://www.google.de/maps/place/" . $details['address'] . "'>" . $details['address'] . "</td>
                         <tr>
                         <tr>
-                            <td>Services</td>
+                            <td>" . i18n("services") . "</td>
                             <td>" . $details['services'] . "</td>
                         <tr>
                         <tr>
-                            <td>Description</td>
+                            <td>" . i18n("description") . "</td>
                             <td>" . $details['description'] . "</td>
                         <tr>
                         <tr>
-                            <td>Email Address</td>
+                            <td>" . i18n("emailAddress") . "</td>
                             <td><a href='mailto:" . $details['emailAddress'] . "'>" . $details['emailAddress'] . "</td>
                         <tr>
                         <tr>
-                            <td>Phone Number</td>
+                            <td>" . i18n("phoneNumber") . "</td>
                             <td><a href='tel:" . $details['phoneNumber'] . "'>" . $details['phoneNumber'] . "</td>
                         <tr>
                         <tr>
-                            <td>Website</td>
+                            <td>" . i18n("website") . "</td>
                             <td><a href='" . $details['website'] . "'>" . $details['website'] . "</td>
                         <tr>
                         <tr>
-                            <td>Facebook</td>
+                            <td>" . i18n("facebook") . "</td>
                             <td><a href='" . $details['facebook'] . "'>" . $details['facebook'] . "</td>
                         <tr>
                         <tr>
-                            <td>Notes</td>
+                            <td>" . i18n("notes") . "</td>
                             <td>" . $details['notes'] . "</td>
                         <tr>
                         <tr>
-                            <td>Need Papers?</td>
+                            <td>" . i18n("needPapers") . "</td>
                             <td>" . $details['needPapers'] . "</td>
                         <tr>
                         <tr>
-                            <td>Date last updated</td>
+                            <td>" . i18n("dateLastUpdated") . "</td>
                             <td>" . $details['dateLastUpdated'] . "</td>
                         <tr>
                     </table><br>";
                 } else {
-                    echo i18n("Details - Error, no ID specified!");
+                    echo i18n("detailsError");
                 }
                     
                 /*

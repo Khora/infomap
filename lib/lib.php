@@ -125,7 +125,7 @@
             return '<div id="logo">
                 <a href="infomap.php"><img src="img/khoraLogo.png"></a>
             </div>
-            <div id="title"><h1>' . i18n($title) . '</h1></div>
+            <div id="title"><h1>' . $title . '</h1></div>
             <div id="menuArea">
                 <p id="languageTextField" style="width: 100%; text-align: center; vertical-align: middle; font-size: 15px; font-weight: bold;">&nbsp;</p>
                 <table style="width: 100%; text-align: right;" onmouseleave="document.getElementById(\'languageTextField\').innerHTML=\'&nbsp;\'">
@@ -142,7 +142,7 @@
                 <table style="width: 97%; text-align: right; margin-right: 0px; margin-left: auto;">
                     <tr>
                         <td>' . getButton(i18n("help"), "img/questionmark.png", "document.location='help.php';") . '</td>
-                        <td>' . getButton(i18n("reload&nbsp;data"), "img/reload.png", "clearFavorites(); document.location='infomap.php?reload=true';") . '</td>
+                        <td>' . getButton(i18n("reloadData"), "img/reload.png", "clearFavorites(); document.location='infomap.php?reload=true';") . '</td>
                         <td><a href="https://www.facebook.com/KhoraAthens/"><img id="socialNetworkButton" src="img/facebook.png"></a></td>
                         <td><a href="https://www.instagram.com/khoraathens/"><img id="socialNetworkButton" src="img/instagram.png"></a></td>
                         <td><a href="http://www.khora-athens.org/"><img id="socialNetworkButton" src="img/webpage.png"></a></td>
@@ -166,7 +166,7 @@
                     <a href="infomap.php"><img src="img/khoraLogo.png" style="width: 9mm; height: 8mm;"></a>
                 </div>
                 <div id="mobileTitle">
-                    ' . i18n($title) . '
+                    ' . $title . '
                 </div>
                 <div id="mobileBurgerIcon">
                     <img src="img/burgerMenuIcon.png" id="mobileLogoImg" style="width: 9mm; height: 9mm;" onclick="closeOrOpenMobileMenu();">
@@ -213,12 +213,12 @@
                     </tr>
                     <tr>
                         <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
-                            <a href="help.php" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/questionmark.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;HELP</span></a>
+                            <a href="help.php" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/questionmark.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("help") . '</span></a>
                         </td>
                     </tr>
                     <tr>
                         <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
-                            <a onclick="clearFavorites(); document.location=\'infomap.php?reload=true\';" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/reload.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;RELOAD DATA</span></a>
+                            <a onclick="clearFavorites(); document.location=\'infomap.php?reload=true\';" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/reload.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("reloadData") . '</span></a>
                         </td>
                     </tr>
                     <tr>
@@ -238,7 +238,7 @@
                     </tr>
                     <tr>
                         <td id="switchToDesktop" style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
-                            <a href="' . basename($_SERVER['PHP_SELF']) . '?mobile=false" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/computer.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;DESKTOP VERSION</span></a>
+                            <a href="' . basename($_SERVER['PHP_SELF']) . '?mobile=false" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/computer.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("desktopVersion") . '</span></a>
                         </td>
                     </tr>
                 </table>
@@ -420,13 +420,19 @@
     }
     
     function debug($message) {
-        echo "<p style='font-size: 20px'>Debug: " . $message . "</p>";
+        echo "<p style='font-size: 8px'>Debug: " . $message . "</p>";
     }
     
-    function i18n($text) {
-        return $text;
+    function i18n($key) {
+        // find corresponding value to key
+        $value = json_decode(getFileContent("i18n/i18n.json"), true)[getLanguage()][$key];
+        // in the end make spaces to hard spaces
+        return str_replace(" ", "&nbsp;", htmlentities($value));
     }
     
+    /*
+     * Gets the content of the given file as a string
+     */
     function getFileContent($path) {
         $content = "";
         if (($handle = fopen($path, "r")) !== FALSE) {

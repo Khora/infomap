@@ -13,7 +13,7 @@
     <body>
         <?php
             echo getSearch();
-            echo getTopArea(i18n("INFOMAP"));
+            echo getTopArea(i18n("infomap"));
         ?>
         <div id="content">
             <?php
@@ -23,16 +23,16 @@
                                 <img src='img/arrowDown.png'>
                             </td>
                             <td style='padding: 0px;'>
-                                " . getButton(i18n("&nbsp;&nbsp;&nbsp;&nbsp;toggle&nbsp;all"), "img/starOn.png", "toggleAllFavoritesAndUpdateStarImages();") . "
+                                " . getButton("&nbsp;&nbsp;&nbsp;&nbsp;" . i18n("toggleAll"), "img/starOn.png", "toggleAllCurrentlyVisibleAndUpdateStarImages(false);") . "
                             </td>
                             <td style='padding-left: 20px;'>
                                 " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='favorites.php';") . "
                             </td>
                             <td style='padding-left: 20px;'>
-                                " . getButton(i18n("export&nbsp;to&nbsp;pdf"), "img/printer.png", "document.location='export.php';") . "
+                                " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(false);") . "
                             </td>
                             <td style='padding-left: 20px; position: absolute; right: 0;'>
-                                " . getButton(i18n("map&nbsp;view"), "img/location.png", "document.location='mapview.php';") . "
+                                " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                             </td>
                         </table>";
                     echo getTableWithContentFromSpreadsheet();
@@ -43,21 +43,21 @@
                                     " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='favorites.php';") . "
                                 </td>
                                 <td style='padding-right: 1mm'>
-                                    " . getButton(i18n("export&nbsp;to&nbsp;pdf"), "img/printer.png", "document.location='export.php';") . "
+                                    " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(true);") . "
                                 </td>
                             </tr>
                         </table>
                         <table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
                                 <td style='padding-left: calc(50% - 20mm); text-align: center;'>
-                                    " . getButton(i18n("map&nbsp;view"), "img/location.png", "document.location='mapview.php';") . "
+                                    " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                                 </td>
                             </tr>
                         </table>
                         <table style='width: 100%; margin-bottom: 10px; padding: 1mm;'>
                             <tr>
                                 <td style='text-align: right;  padding: 0px;'>
-                                    " . getButton(i18n("&nbsp;&nbsp;&nbsp;&nbsp;toggle&nbsp;all"), "img/starOn.png", "toggleAllFavoritesAndUpdateStarImages();") . "
+                                    " . getButton("&nbsp;&nbsp;&nbsp;&nbsp;" . i18n("toggleAll"), "img/starOn.png", "toggleAllCurrentlyVisibleAndUpdateStarImages(true);") . "
                                 </td>
                                 <td style='text-align: right;'>
                                     <img src='img/arrowDown.png'>
@@ -82,7 +82,7 @@
                     $retVal = "<table id='table' class='gridtable' width='100%'> <tr>";
                     $retVal = $retVal . "<th style='color: #ffffff; background-color: #555555;'>ID</th>";
                     for ($i = 1; $i < $previewCount - 1; $i++) {
-                        $retVal = $retVal . "<th>" . htmlspecialchars($dataEnglish[0][$i]) . "</th>";
+                        $retVal = $retVal . "<th>" . htmlspecialchars($data[0][$i]) . "</th>";
                     }
                     $retVal = $retVal . "</tr>";
                     for ($i = 1; $i < count($dataEnglish); $i++) {

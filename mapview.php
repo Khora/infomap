@@ -12,7 +12,7 @@
     </head>
     <body>
         <?php
-            echo getTopArea(i18n("MAP VIEW"));
+            echo getTopArea(i18n("mapView"));
             
             echo getMapSearch();
         ?>

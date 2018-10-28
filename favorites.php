@@ -12,7 +12,7 @@
     </head>
     <body>
         <?php
-            echo getTopArea(i18n("FAVORITES"));
+            echo getTopArea(i18n("favorites"));
             
             echo getSearch();
         ?>
@@ -24,13 +24,13 @@
                                 " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
                             </td>
                             <td style='padding-left: 20px;'>
-                                " . getButton(i18n("export&nbsp;to&nbsp;pdf"), "img/printer.png", "document.location='export.php';") . "
+                                " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getFavorites();") . "
                             </td>
                             <td style='padding-left: 20px;'>
-                                " . getButton(i18n("clear&nbsp;all"), "img/clear.png", "clearFavorites();") . "
+                                " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
                             </td>
                             <td style='padding-left: 20px; position: absolute; right: 0;'>
-                                " . getButton(i18n("map&nbsp;view"), "img/location.png", "document.location='mapview.php';") . "
+                                " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                             </td>
                         </table>";
                     echo getTableWithContentFromSpreadsheet();
@@ -41,17 +41,17 @@
                                     " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
                                 </td>
                                 <td style='padding-right: 1mm'>
-                                    " . getButton(i18n("export&nbsp;to&nbsp;pdf"), "img/printer.png", "document.location='export.php';") . "
+                                    " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getFavorites();") . "
                                 </td>
                             </tr>
                         </table>
                         <table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
                                 <td style='padding-left: 1mm;'>
-                                    " . getButton(i18n("clear&nbsp;all"), "img/clear.png", "clearFavorites();") . "
+                                    " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
                                 </td>
                                 <td style='padding-right: 1mm'>
-                                    " . getButton(i18n("map&nbsp;view"), "img/location.png", "document.location='mapview.php';") . "
+                                    " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                                 </td>
                             </tr>
                         </table>";
