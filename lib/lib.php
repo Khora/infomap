@@ -1,6 +1,8 @@
 <?php
-    // TODO: is "," as separation char ok?
+    // set max exec time to infinity
+    set_time_limit(0);
     
+    // init session and other data
     session_start();
     initSessionVariables();
     checkDataSource();
@@ -11,6 +13,9 @@
     function initSessionVariables() {
         // how old (in seconds) data may be at most
         $_SESSION["dataExpiryTimeSeconds"] = 500 * 60;
+        
+        // cache for the lat long geocoded positions of addresses
+        $_SESSION["dataCacheGeocodedPositionOfAddresses"] = "downloads/idsToAdressLocationsMapping.json";
         
         // where to save the data cache to
         $_SESSION["dataCacheFilePathEnglish"] = "downloads/currentDataCacheEnglish.csv";
@@ -32,7 +37,7 @@
         $_SESSION["spreadsheetUrlKurdish"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=1847047387";
         
         // get if the client is a mobile device
-        $mobile = "true";
+        $mobile = "false";
         if (isset($_SESSION["mobile"])) {
             $mobile = $_SESSION["mobile"];
         }
@@ -71,6 +76,24 @@
                 downloadFileViaCurl($_SESSION["spreadsheetUrl" . $l], $_SESSION["dataCacheFilePath" . $l]);
             }
         }
+        
+        $idsToAddressStrings = array();
+        $dataEnglish = getFileContentAsCsv($_SESSION["dataCacheFilePathEnglish"]);
+        for ($i = 1; $i < count($dataEnglish); $i++) {
+            $id = htmlspecialchars(getOrDefault($dataEnglish, $dataEnglish, $i, 0));
+            $address = htmlspecialchars(getOrDefault($dataEnglish, $dataEnglish, $i, 4));
+            $idsToAddressStrings += array($id => $address);
+        }
+        
+        $idsToGeoPositions = array();
+        $i = 0;
+        foreach ($idsToAddressStrings as $id => $address) {
+            //$idsToGeoPositions += array($id => mapquestGeocodeApiAddressToLocation($address));
+            $idsToGeoPositions += array($id => array(37.98 + $i, 23.73 + $i));
+            $i = $i + 0.001;
+        }
+        
+        writeStringToFile("downloads/idsToAdressLocationsMapping.json", json_encode($idsToGeoPositions));
     }
     
     /*
@@ -118,6 +141,18 @@
     }
     
     /*
+     * Gets the content of the head tag needed for the leaflet map view.
+     */
+    function getPreparationForLeaflet() {
+        return '<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+               integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+               crossorigin=""/>
+             <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+               integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+               crossorigin=""></script>';
+    }
+    
+    /*
      * Gets the top area containing the common menu.
      */
     function getTopArea($title) {
@@ -126,6 +161,7 @@
                 <a href="infomap.php"><img src="img/khoraLogo.png"></a>
             </div>
             <div id="title"><h1>' . $title . '</h1></div>
+            <div id="topBackground"></div>
             <div id="menuArea">
                 <p id="languageTextField" style="width: 100%; text-align: center; vertical-align: middle; font-size: 15px; font-weight: bold;">&nbsp;</p>
                 <table style="width: 100%; text-align: right;" onmouseleave="document.getElementById(\'languageTextField\').innerHTML=\'&nbsp;\'">
@@ -405,6 +441,10 @@
         return downloadFileViaCurl($url, "downloads/map.png");
     }
     
+    function getLatLongPositionOfId($id) {
+        return getFileContentAsObjectFromJsonString($_SESSION["dataCacheGeocodedPositionOfAddresses"])[$id];
+    }
+    
     /*
      * Gets the value of the array if it is not empty or the corresponding value of the default array
      */
@@ -428,6 +468,13 @@
         $value = json_decode(getFileContent("i18n/i18n.json"), true)[getLanguage()][$key];
         // in the end make spaces to hard spaces
         return str_replace(" ", "&nbsp;", htmlentities($value));
+    }
+    
+    /*
+     * Writes the content to the given file
+     */
+    function writeStringToFile($path, $content) {
+        file_put_contents($path, $content);
     }
     
     /*
@@ -469,8 +516,15 @@
         return $dataToReturn;
     }
     
+    /*
+     * Reads the content of the given file as a json file and returns it as PHP objects
+     */
+    function getFileContentAsObjectFromJsonString($path) {
+        return json_decode(getFileContent($path), true);
+    }
+    
     function downloadFileViaCurl($url, $destination) {
-        if (!ini_set('default_socket_timeout', 15)) {
+        if (!ini_set('default_socket_timeout', 1500)) {
             error("Unable to change socket timeout!");
         }
                     
