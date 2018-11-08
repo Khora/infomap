@@ -96,17 +96,24 @@
                             document.getElementById('map').style.display = 'block';
                         </script>";
                 
-                echo "<script>
-                            var geoPositionsOfAddresses = " . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . "
-                                console.log(geoPositionsOfAddresses);
-                            for (i = 1; i < Object.keys(geoPositionsOfAddresses).length; i++) {
-                                addMarkerToLeafletMap(geoPositionsOfAddresses[i][0], geoPositionsOfAddresses[i][1], i.toString(), i.toString() + ' TEXT', 'red');
-                                console.log(geoPositionsOfAddresses[i][0]);
-                            }
-                        </script>";
+                $addressesData = array();
+                $namesData = array();
+                $dataEnglish = getFileContentAsCsv($_SESSION["dataCacheFilePathEnglish"]);
+                for ($i = 1; $i < count($dataEnglish); $i++) {
+                    array_push($namesData, $dataEnglish[$i][2]);
+                    array_push($addressesData, $dataEnglish[$i][4]);
+                }
                 
                 echo "<script>
-                            function toggleMapView() {
+                            var geoPositionsOfAddresses = " . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . "
+                            var namesData = " . json_encode($namesData) . "
+                            var addressesData = " . json_encode($addressesData) . "
+                            console.log(addressesData);
+                            for (i = 1; i < Object.keys(geoPositionsOfAddresses).length; i++) {
+                                addMarkerToLeafletMap(geoPositionsOfAddresses[i][0], geoPositionsOfAddresses[i][1], i.toString(), namesData[i], 'red');
+                            }";
+                
+                echo "function toggleMapView() {
                                 var width = window.innerWidth
                                             || document.documentElement.clientWidth
                                             || document.body.clientWidth;
@@ -119,6 +126,14 @@
                                     document.getElementById('map').style.display = 'block';
                                     document.getElementById('tableDiv').style.width = width / 2 - 10 + 'px';
                                 }
+                                
+                                if (map !== null && map !== undefined) {
+                                    map.invalidateSize();
+                                }
+                            }
+                                
+                            if (map !== null && map !== undefined) {
+                                map.invalidateSize();
                             }
                         </script>";
                 
@@ -141,7 +156,7 @@
                     }
                     $retVal = $retVal . "</tr>";
                     for ($i = 1; $i < count($dataEnglish); $i++) {
-                        $backgroundColor = "FDFDFD";
+                        $backgroundColor = "#FFFFFF";
                         if ($i % 2 == 0) {
                             $backgroundColor = "#F1F1F1";
                         }
@@ -153,7 +168,7 @@
                                 } else if ($j == 2) {
                                     $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'><b>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</b></td>";
                                 } else if ($j == 4) {
-                                    $retVal = $retVal . "<td onClick='showInMap(\"" . $i . "\")' rowspan='2' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "&nbsp&#187;</td>";
+                                    $retVal = $retVal . "<td onClick='showInMapAndRemoveOthers(\"" . $i . "\")' rowspan='2' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "&nbsp&#187;</td>";
                                 } else {
                                     $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</td>";
                                 }
@@ -229,28 +244,58 @@
                     return '<div id="map" style="width: 100%; height: 380px;">
                                 <script>
                                     var map = L.map(\'map\').setView([37.97688, 23.71871], 13);
-                                    var markers = new Map();
+                                    var markers = new L.FeatureGroup();
+                                    map.addLayer(markers);
+                                    //markers.addTo(map);
 
-
+                                    var markersMap = new Map();
                                     L.tileLayer(\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {
                                         attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\'
                                     }).addTo(map);
                                     
                                     function addMarkerToLeafletMap(lat, long, id, text, color) {
+                                        var keys = Array.from(markersMap.keys());
                                         var m = L.marker([lat, long]);
-                                        m.addTo(map).bindPopup(text).openPopup();
-                                        markers.set(id, m);
+                                        markers.addLayer(m);
+                                        
+                                        m.bindPopup(id + " - " + text);
+                                        m.on("mouseover", function (e) {
+                                            this.openPopup();
+                                        });
+                                        m.on("mouseout", function (e) {
+                                            this.closePopup();
+                                        });
+                                        m.on("click", function (e) {
+                                            document.getElementById("infomapSearch").value = text;
+                                            searchTable(false);
+                                        });
+                                        m.openPopup();
+                                        
+                                        markersMap.set(id, m);
                                     }
                                     
                                     function removeMarkerFromLeafletMap(id) {
-                                        var m = markers.get(id);
+                                        var m = markersMap.get(id);
                                         if (m !== null && m !== undefined) {
-                                            map.removeLayer(m);
+                                            markers.removeLayer(m);
+                                            markersMap.delete(id);
                                         }
                                     }
                                     
+                                    function removeAllMarkerFromLeafletMap() {
+                                        markers.clearLayers();
+                                        markersMap = new Map();
+                                    }
+                                    
+                                    function showInMapAndRemoveOthers(id) {
+                                        removeAllMarkerFromLeafletMap();
+                                        showInMap(id);
+                                    }
+                                    
                                     function showInMap(id) {
-                                        removeMarkerFromLeafletMap(id);
+                                        if (id !== null && id !== undefined && geoPositionsOfAddresses[id] !== null && geoPositionsOfAddresses[id] !== undefined && geoPositionsOfAddresses[id][0] !== null && geoPositionsOfAddresses[id][0] !== undefined && geoPositionsOfAddresses[id][1] !== null && geoPositionsOfAddresses[id][1] !== undefined) {
+                                            addMarkerToLeafletMap(geoPositionsOfAddresses[id][0], geoPositionsOfAddresses[id][1], id.toString(), namesData[id - 1], "red");
+                                        }
                                     }
                                 </script>
                             </div>';

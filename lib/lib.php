@@ -317,6 +317,7 @@
                 <input type="text" id="infomapSearch" placeholder="search..." onkeyup="searchTable(false)">
             </div>
             <div id="searchGo">
+                <img src="img/searchClearIcon.png" onclick="document.getElementById(\'infomapSearch\').value = \'\'; searchTable(false);">&nbsp;&nbsp;
                 <img src="img/searchGoIcon.png" onclick="searchTable(false)">
             </div>';
 
