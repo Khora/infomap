@@ -60,20 +60,28 @@
     /*
      * Checks how old the cached data is and refreshes it if necessary
      */
-    function checkDataSource() {
-        $forceUpdate = false;
+    function checkDataSource() {  
+        $performDataUpdate = false;
         if (isset($_GET["reload"]) && strcmp($_GET["reload"], "true") == 0) {
-            $forceUpdate = true;
+            $performDataUpdate = true;
         }
-        if ($forceUpdate) {
-            debug("Update of the data cache successful!");
+        
+        $nowInSecondsUnixTimestamp = time();
+        $ageOfCacheFiles = $nowInSecondsUnixTimestamp - filemtime($_SESSION["dataCacheFilePathEnglish"]);
+        if ($performDataUpdate || !file_exists($_SESSION["dataCacheFilePathEnglish"]) || $ageOfCacheFiles > $_SESSION["dataExpiryTimeSeconds"]) {
+            $performDataUpdate = true;
+        }
+        
+        if ($performDataUpdate) {
+            debug("Now performing data cache update!");
         }
         
         // English, Arabic, Farsi, Greek, French, Urdu, Kurdish
         $supportedLanguages = array("English", "Arabic", "Farsi", "Greek", "French", "Urdu", "Kurdish");
         foreach ($supportedLanguages as $l) {
-            if ($forceUpdate || !file_exists($_SESSION["dataCacheFilePath" . $l]) || time() - filectime($_SESSION["dataCacheFilePath" . $l]) > $_SESSION["dataExpiryTimeSeconds"]) {
+            if ($performDataUpdate) {
                 downloadFileViaCurl($_SESSION["spreadsheetUrl" . $l], $_SESSION["dataCacheFilePath" . $l]);
+                debug("Downloaded: " . $l . " data file.");
             }
         }
         
@@ -85,15 +93,16 @@
             $idsToAddressStrings += array($id => $address);
         }
         
-        $idsToGeoPositions = array();
-        $i = 0;
-        foreach ($idsToAddressStrings as $id => $address) {
-            //$idsToGeoPositions += array($id => mapquestGeocodeApiAddressToLocation($address));
-            $idsToGeoPositions += array($id => array(37.98 + $i, 23.73 + $i));
-            $i = $i + 0.001;
+        if ($performDataUpdate) {
+            $idsToGeoPositions = array();
+            $i = 0;
+            foreach ($idsToAddressStrings as $id => $address) {
+                $idsToGeoPositions += array($id => mapquestGeocodeApiAddressToLocation($address));
+            }
+            
+            writeStringToFile("downloads/idsToAdressLocationsMapping.json", json_encode($idsToGeoPositions));
+            debug("Wrote idsToAdressLocationsMapping.json file.");
         }
-        
-        writeStringToFile("downloads/idsToAdressLocationsMapping.json", json_encode($idsToGeoPositions));
     }
     
     /*
@@ -308,17 +317,24 @@
     /*
      * Gets the search bar and its functionality.
      */
-    function getSearch() {
+    function getSearch($filterOnFavorites) {
         if (!isMobile()) {
+            $filterOnFavoritesString = "";
+            if ($filterOnFavorites) {
+                $filterOnFavoritesString = "searchTable(false, true);updateAllStarImages();hideAllInTableThatAreNotFavorites(false);filterMapOnFavorites();";
+            } else {
+                $filterOnFavoritesString = "searchTable(false, false);";
+            }
+            
             return '<div id="searchImage">
                 <img src="img/searchIcon.png"">
             </div>
             <div id="search">
-                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="searchTable(false)">
+                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="' . $filterOnFavoritesString . '">
             </div>
             <div id="searchGo">
-                <img src="img/searchClearIcon.png" onclick="document.getElementById(\'infomapSearch\').value = \'\'; searchTable(false);">&nbsp;&nbsp;
-                <img src="img/searchGoIcon.png" onclick="searchTable(false)">
+                <img src="img/searchClearIcon.png" onclick="document.getElementById(\'infomapSearch\').value = \'\';' . $filterOnFavoritesString . '">&nbsp;&nbsp;
+                <img src="img/searchGoIcon.png" onclick="' . $filterOnFavoritesString . '">
             </div>';
 
         } else {
@@ -326,10 +342,10 @@
                 <img src="img/searchIcon.png"">
             </div>
             <div id="search">
-                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="searchTable(true)">
+                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="searchTable(true, false)">
             </div>
             <div id="searchGo">
-                <img src="img/searchGoIcon.png" onclick="searchTable(true)">
+                <img src="img/searchGoIcon.png" onclick="searchTable(true, false)">
             </div>';
 
         }
@@ -457,11 +473,11 @@
     }
     
     function error($message) {
-        echo "<p style='font-size: 60px; background-color: red;'>ERROR: " . $message . "</p>";
+        echo "<p style='z-index: 50005;font-size: 60px; background-color: red;'>ERROR: " . $message . "</p>";
     }
     
     function debug($message) {
-        echo "<p style='font-size: 8px'>Debug: " . $message . "</p>";
+        echo "<p style='z-index: 50000; font-size: 8px'>Debug: " . $message . "</p>";
     }
     
     function i18n($key) {

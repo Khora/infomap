@@ -21,10 +21,8 @@
                 $headerText = i18n("details") . "&nbsp;-&nbsp;ID:&nbsp;" . $id;
             }
             echo getTopArea($headerText);
-            
-            echo getSearch();
         ?>
-        <div id="content">
+        <div id="content" style='top: 200px;'>
             <?php
                 echo "<table style='margin-bottom: 10px;'>
                         <td style='padding: 10px; padding-left: 5mm;'>

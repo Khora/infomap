@@ -13,7 +13,7 @@
     </head>
     <body>
         <?php
-            echo getSearch();
+            echo getSearch(false);
             echo getTopArea(i18n("infomap"));
         ?>
         <div id="content">
@@ -79,19 +79,11 @@
                                 <td style='width: 50%; vertical-align: top;'>" . getLeafletMap() . "</td>
                             </tr>";
                 } else {
-                    echo "<table style='width: 100%;'>
-                            <tr>
-                                <td>" . getMobileTableWithContentFromSpreadsheet() . "</td>
-                                <td>" . getLeafletMap() . "</td>
-                            </tr>";
+                    echo getLeafletMap() . "<br><br><br>" . getMobileTableWithContentFromSpreadsheet();
                 }
                 
                 echo "<script>
-                            var height = window.innerHeight
-                                        || document.documentElement.clientHeight
-                                        || document.body.clientHeight;
-                            document.getElementById('tableDiv').style.height = height - 395 + 'px';
-                            document.getElementById('map').style.height = height - 395 + 'px';
+                            rescaleHeight();
                             document.getElementById('tableDiv').style.display = 'block';
                             document.getElementById('map').style.display = 'block';
                         </script>";
@@ -108,9 +100,8 @@
                             var geoPositionsOfAddresses = " . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . "
                             var namesData = " . json_encode($namesData) . "
                             var addressesData = " . json_encode($addressesData) . "
-                            console.log(addressesData);
-                            for (i = 1; i < Object.keys(geoPositionsOfAddresses).length; i++) {
-                                addMarkerToLeafletMap(geoPositionsOfAddresses[i][0], geoPositionsOfAddresses[i][1], i.toString(), namesData[i], 'red');
+                            for (i = 0; i < Object.keys(geoPositionsOfAddresses).length; i++) {
+                                addMarkerToLeafletMap(geoPositionsOfAddresses[i + 1][0], geoPositionsOfAddresses[i + 1][1], (i + 1).toString(), namesData[i], 'red');
                             }";
                 
                 echo "function toggleMapView() {
@@ -246,7 +237,6 @@
                                     var map = L.map(\'map\').setView([37.97688, 23.71871], 13);
                                     var markers = new L.FeatureGroup();
                                     map.addLayer(markers);
-                                    //markers.addTo(map);
 
                                     var markersMap = new Map();
                                     L.tileLayer(\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {
@@ -254,7 +244,6 @@
                                     }).addTo(map);
                                     
                                     function addMarkerToLeafletMap(lat, long, id, text, color) {
-                                        var keys = Array.from(markersMap.keys());
                                         var m = L.marker([lat, long]);
                                         markers.addLayer(m);
                                         
@@ -267,7 +256,7 @@
                                         });
                                         m.on("click", function (e) {
                                             document.getElementById("infomapSearch").value = text;
-                                            searchTable(false);
+                                            searchTable(false, false);
                                         });
                                         m.openPopup();
                                         
@@ -297,6 +286,18 @@
                                             addMarkerToLeafletMap(geoPositionsOfAddresses[id][0], geoPositionsOfAddresses[id][1], id.toString(), namesData[id - 1], "red");
                                         }
                                     }
+                                    
+                                    function rescaleHeight() {
+                                        var height = window.innerHeight
+                                                                || document.documentElement.clientHeight
+                                                                || document.body.clientHeight;
+                                                    document.getElementById("tableDiv").style.height = height - 395 + "px";
+                                                    document.getElementById("map").style.height = height - 395 + "px";
+                                    }
+                                    
+                                    window.onresize = function(event) {
+                                        rescaleHeight();
+                                    };
                                 </script>
                             </div>';
                 }

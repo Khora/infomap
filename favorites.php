@@ -8,13 +8,13 @@
         <title>Khora Infomap | FAVORITES</title>
         <?php
             echo getHeadContent();
+            echo getPreparationForLeaflet();
         ?>
     </head>
     <body>
         <?php
+            echo getSearch(true);
             echo getTopArea(i18n("favorites"));
-            
-            echo getSearch();
         ?>
         <div id="content">
             <?php
@@ -27,13 +27,15 @@
                                 " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getFavorites();") . "
                             </td>
                             <td style='padding-left: 20px;'>
-                                " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
+                                " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();hideAllInTableThatAreNotFavorites(false);filterMapOnFavorites();") . "
                             </td>
-                            <td style='padding-left: 20px; position: absolute; right: 0;'>
+                            <td style='padding-left: 20px; position: absolute; right: 75mm;'>
                                 " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                             </td>
+                            <td style='padding-left: 20px; position: absolute; right: 0;'>
+                                " . getButton(i18n("toggleMapView"), "img/locationToggle.png", "toggleMapView();") . "
+                            </td>
                         </table>";
-                    echo getTableWithContentFromSpreadsheet();
                 } else {
                     echo "<table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
@@ -48,7 +50,7 @@
                         <table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
                                 <td style='padding-left: 1mm;'>
-                                    " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
+                                    " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();hideAllInTableThatAreNotFavorites(false);filterMapOnFavorites();") . "
                                 </td>
                                 <td style='padding-right: 1mm'>
                                     " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
@@ -57,6 +59,64 @@
                         </table>";
                     echo getMobileTableWithContentFromSpreadsheet();
                 }
+                
+                if (!isMobile()) {
+                    echo "<table style='width: 100%;'>
+                            <tr>
+                                <td style='width: 50%; vertical-align: top;'><div id='tableDiv' style='overflow-y: scroll;'>" . getTableWithContentFromSpreadsheet() . "</div></td>
+                                <td style='width: 50%; vertical-align: top;'>" . getLeafletMap() . "</td>
+                            </tr>";
+                } else {
+                    echo getLeafletMap() . "<br><br><br>" . getMobileTableWithContentFromSpreadsheet();
+                }
+                
+                echo "<script>
+                            rescaleHeight();
+                            document.getElementById('tableDiv').style.display = 'block';
+                            document.getElementById('map').style.display = 'block';
+                        </script>";
+                
+                $addressesData = array();
+                $namesData = array();
+                $dataEnglish = getFileContentAsCsv($_SESSION["dataCacheFilePathEnglish"]);
+                for ($i = 1; $i < count($dataEnglish); $i++) {
+                    array_push($namesData, $dataEnglish[$i][2]);
+                    array_push($addressesData, $dataEnglish[$i][4]);
+                }
+                
+                echo "<script>
+                            var geoPositionsOfAddresses = " . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . "
+                            var namesData = " . json_encode($namesData) . "
+                            var addressesData = " . json_encode($addressesData) . "
+                            for (i = 0; i < Object.keys(geoPositionsOfAddresses).length; i++) {
+                                addMarkerToLeafletMap(geoPositionsOfAddresses[i + 1][0], geoPositionsOfAddresses[i + 1][1], (i + 1).toString(), namesData[i], 'red');
+                            }
+                                    
+                            filterMapOnFavorites();";
+                
+                echo "function toggleMapView() {
+                                var width = window.innerWidth
+                                            || document.documentElement.clientWidth
+                                            || document.body.clientWidth;
+                                
+                                var hideMapNow = (document.getElementById('map').style.display == 'block');
+                                if (hideMapNow) {
+                                    document.getElementById('map').style.display = 'none';
+                                    document.getElementById('tableDiv').style.width = width - 15 + 'px';
+                                } else {
+                                    document.getElementById('map').style.display = 'block';
+                                    document.getElementById('tableDiv').style.width = width / 2 - 10 + 'px';
+                                }
+                                
+                                if (map !== null && map !== undefined) {
+                                    map.invalidateSize();
+                                }
+                            }
+                                
+                            if (map !== null && map !== undefined) {
+                                map.invalidateSize();
+                            }
+                        </script>";
                 
                 /*
                  * Gets a searchable table with the content from the cached Google Spreadsheet.
@@ -85,19 +145,21 @@
                         for ($j = 0; $j < $previewCount; $j++) {
                             if ($j !== 5) {
                                 if ($j == 1) {
-                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border-bottom: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'><i>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</i></td>";
+                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'><i>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</i></td>";
                                 } else if ($j == 2) {
-                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border-bottom: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'><b>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</b></td>";
+                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'><b>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</b></td>";
+                                } else if ($j == 4) {
+                                    $retVal = $retVal . "<td onClick='showInMapAndRemoveOthers(\"" . $i . "\")' rowspan='2' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "&nbsp&#187;</td>";
                                 } else {
-                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border-bottom: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</td>";
+                                    $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style='border: 0px; cursor: pointer; background-color: " . $backgroundColor . ";'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, $j)) . "</td>";
                                 }
                             }
                         }
                         $retVal = $retVal . "</tr>\n";
                         
                         $retVal = $retVal . "<tr>";
-                        $retVal = $retVal . "<td id='s_" . $i . "' onClick='toggleFavoritesAndUpdateStarImages([" . $i . "])' style=' background-color: " . $backgroundColor . ";cursor: pointer; border-right: 0px; border-top: 0px;'><img src='img/starInactive.png'></td>";
-                        $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style=' background-color: " . $backgroundColor . ";cursor: pointer; border-left: 0px; border-top: 0px;' colspan='" . ($previewCount - 1) . "'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, 5)) . "</td>";
+                        $retVal = $retVal . "<td id='s_" . $i . "' onClick='toggleFavoritesAndUpdateStarImages([" . $i . "])' style=' background-color: " . $backgroundColor . "; cursor: pointer; border: 0px;'><img src='img/starInactive.png'></td>";
+                        $retVal = $retVal . "<td onClick='document.location.href=\"details.php?language=" . getLanguage() . "&id=" . $i . "\"' style=' background-color: " . $backgroundColor . "; cursor: pointer; border: 0px; ' colspan='" . ($previewCount - 3) . "'>" . htmlspecialchars(getOrDefault($data, $dataEnglish, $i, 5)) . "</td>";
                         $retVal = $retVal . "</tr>\n";
                         $retVal = $retVal . "<script>starImageElements.push(" . $i . ");</script>";
                     }
@@ -156,6 +218,95 @@
                     $retVal = $retVal . "<script>updateAllStarImages();</script>";
                     $retVal = $retVal . "<script>hideAllInTableThatAreNotFavorites(true);</script>";
                     return $retVal;
+                }
+                
+                /*
+                 * Gets a leaflet map with the possibility to place markers on positions.
+                 */
+                function getLeafletMap() {
+                    return '<div id="map" style="width: 100%; height: 380px;">
+                                <script>
+                                    var map = L.map(\'map\').setView([37.97688, 23.71871], 13);
+                                    var markers = new L.FeatureGroup();
+                                    map.addLayer(markers);
+
+                                    var markersMap = new Map();
+                                    L.tileLayer(\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {
+                                        attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\'
+                                    }).addTo(map);
+                                    
+                                    function addMarkerToLeafletMap(lat, long, id, text, color) {
+                                        var m = L.marker([lat, long]);
+                                        markers.addLayer(m);
+                                        
+                                        m.bindPopup(id + " - " + text);
+                                        m.on("mouseover", function (e) {
+                                            this.openPopup();
+                                        });
+                                        m.on("mouseout", function (e) {
+                                            this.closePopup();
+                                        });
+                                        m.on("click", function (e) {
+                                            document.getElementById("infomapSearch").value = text;
+                                            searchTable(false, true);
+                                        });
+                                        m.openPopup();
+                                        
+                                        markersMap.set(id, m);
+                                    }
+                                    
+                                    function removeMarkerFromLeafletMap(id) {
+                                        if (id !== null && id !== undefined) {
+                                            var m = markersMap.get(String(id));
+                                            if (m !== null && m !== undefined) {
+                                                markers.removeLayer(m);
+                                                markersMap.delete(id);
+                                            }
+                                        }
+                                    }
+                                    
+                                    function removeAllMarkerFromLeafletMap() {
+                                        markers.clearLayers();
+                                        markersMap = new Map();
+                                    }
+                                    
+                                    function showInMapAndRemoveOthers(id) {
+                                        removeAllMarkerFromLeafletMap();
+                                        showInMap(id);
+                                    }
+                                    
+                                    function showInMap(id) {
+                                        if (id !== null && id !== undefined && geoPositionsOfAddresses[id] !== null && geoPositionsOfAddresses[id] !== undefined && geoPositionsOfAddresses[id][0] !== null && geoPositionsOfAddresses[id][0] !== undefined && geoPositionsOfAddresses[id][1] !== null && geoPositionsOfAddresses[id][1] !== undefined) {
+                                            addMarkerToLeafletMap(geoPositionsOfAddresses[id][0], geoPositionsOfAddresses[id][1], id.toString(), namesData[id - 1], "red");
+                                        }
+                                    }
+                                    
+                                    function filterMapOnFavorites() {
+                                        var keys = Array.from(markersMap.keys());
+                                        var favoritesList;
+                                        for (index = 0; index < keys.length; index++) {
+                                            if (favoritesList == null && favoritesList == undefined) {
+                                                favoritesList = getFavorites();
+                                            }
+                                            if (!favoritesList.includes(parseInt(keys[index]))) {
+                                                removeMarkerFromLeafletMap(parseInt(keys[index]));
+                                            }
+                                        }
+                                    }
+                                    
+                                    function rescaleHeight() {
+                                        var height = window.innerHeight
+                                                                || document.documentElement.clientHeight
+                                                                || document.body.clientHeight;
+                                                    document.getElementById("tableDiv").style.height = height - 395 + "px";
+                                                    document.getElementById("map").style.height = height - 395 + "px";
+                                    }
+                                    
+                                    window.onresize = function(event) {
+                                        rescaleHeight();
+                                    };
+                                </script>
+                            </div>';
                 }
             ?>
         </div>
