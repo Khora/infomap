@@ -244,7 +244,12 @@
                                     }).addTo(map);
                                     
                                     function addMarkerToLeafletMap(lat, long, id, text, color) {
-                                        var m = L.marker([lat, long]);
+                                        var numMarker = L.ExtraMarkers.icon({
+                                            icon: \'fa-number\',
+                                            number: id,
+                                            markerColor: \'blue\'
+                                            });
+                                        var m = L.marker([lat, long], {icon: numMarker});
                                         markers.addLayer(m);
                                         
                                         m.bindPopup(id + " - " + text);

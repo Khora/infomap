@@ -11,8 +11,8 @@
      * Initialisation method, to be called first.
      */
     function initSessionVariables() {
-        // how old (in seconds) data may be at most
-        $_SESSION["dataExpiryTimeSeconds"] = 500 * 60;
+        // how old (in seconds) data may be at most (7 days)
+        $_SESSION["dataExpiryTimeSeconds"] = 7 * 24 * 60 * 60;
         
         // cache for the lat long geocoded positions of addresses
         $_SESSION["dataCacheGeocodedPositionOfAddresses"] = "downloads/idsToAdressLocationsMapping.json";
@@ -158,7 +158,9 @@
                crossorigin=""/>
              <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
                integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-               crossorigin=""></script>';
+               crossorigin=""></script>
+               <link rel="stylesheet" href="lib/LeafletExtraMarkers/dist/css/leaflet.extra-markers.min.css">
+               <script src="lib/LeafletExtraMarkers/dist/js/leaflet.extra-markers.min.js"></script>';
     }
     
     /*
@@ -557,6 +559,38 @@
         curl_setopt($c, CURLOPT_URL, $url);
         curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($c, CURLOPT_SSLVERSION, 6);
+        $data = curl_exec($c);
+        $error = curl_error($c); 
+        curl_close($c);
+        
+        if ($error !== "") {
+            error($error);
+        }
+
+        $file = fopen($destination, "w+");
+        fputs($file, $data);
+        fclose($file);
+        
+        return $destination;
+    }
+
+    function downloadHtmlToPdf($source) {
+        $destination = "downloads/pdfExport.pdf";
+        if (!is_dir(dirname($destination))) {
+            mkdir(dirname($destination), 0777, true);
+        }
+        
+        $c = curl_init();
+
+        curl_setopt_array($c, array(
+            CURLOPT_URL => "https://api.pdfshift.io/v2/convert/",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode(array("source" => $source, "landscape" => true, "use_print" => false)),
+            CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+            CURLOPT_USERPWD => '03e85607fee24a56b9f7b1584ca6e99a'
+        ));
+        
         $data = curl_exec($c);
         $error = curl_error($c); 
         curl_close($c);
