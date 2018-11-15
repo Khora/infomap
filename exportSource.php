@@ -182,6 +182,9 @@
                                         markers.addLayer(m);
                                         
                                         markersMap.set(id, m);
+                                        
+                                        var group = new L.featureGroup([ ...markersMap.values() ]);
+                                        map.fitBounds(group.getBounds());
                                     }
                                     
                                     function removeMarkerFromLeafletMap(id) {

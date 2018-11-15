@@ -234,7 +234,7 @@
                 function getLeafletMap() {
                     return '<div id="map" style="width: 100%; height: 380px;">
                                 <script>
-                                    var map = L.map(\'map\').setView([37.97688, 23.71871], 13);
+                                    var map = L.map(\'map\').setView([37.97688, 3.71871], 13);
                                     var markers = new L.FeatureGroup();
                                     map.addLayer(markers);
 
@@ -266,6 +266,9 @@
                                         m.openPopup();
                                         
                                         markersMap.set(id, m);
+                                        
+                                        var group = new L.featureGroup([ ...markersMap.values() ]);
+                                        map.fitBounds(group.getBounds());
                                     }
                                     
                                     function removeMarkerFromLeafletMap(id) {

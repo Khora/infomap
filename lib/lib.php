@@ -323,9 +323,14 @@
         if (!isMobile()) {
             $filterOnFavoritesString = "";
             if ($filterOnFavorites) {
-                $filterOnFavoritesString = "searchTable(false, true);updateAllStarImages();hideAllInTableThatAreNotFavorites(false);filterMapOnFavorites();";
+                $filterOnFavoritesString = "delayTimeMs = 500;
+                                            doTaskAfterTimeWhenNotRescheduled('searchTable(false, true)', delayTimeMs);
+                                            doTaskAfterTimeWhenNotRescheduled('updateAllStarImages()', delayTimeMs);
+                                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(false)', delayTimeMs);
+                                            doTaskAfterTimeWhenNotRescheduled('filterMapOnFavorites()', delayTimeMs);";
             } else {
-                $filterOnFavoritesString = "searchTable(false, false);";
+                $filterOnFavoritesString = "delayTimeMs = 500;
+                                            doTaskAfterTimeWhenNotRescheduled('searchTable(false, false)', delayTimeMs);";
             }
             
             return '<div id="searchImage">
