@@ -126,7 +126,7 @@
                     for ($i = 1; $i < count($dataEnglish); $i++) {
                         $backgroundColor = "#FFFFFF";
                         if ($i % 2 == 0) {
-                            $backgroundColor = "#F1F1F1";
+                            $backgroundColor = "#D0D0D0";
                         }
                         $retVal = $retVal . "<tr>";
                         for ($j = 0; $j < $previewCount; $j++) {
@@ -162,7 +162,7 @@
                 function getLeafletMap() {
                     return '<div id="map" style="width: 100%; height: 380px;">
                                 <script>
-                                    var map = L.map(\'map\', {zoomControl: false}).setView([37.97688, 23.71871], 13);
+                                    var map = L.map(\'map\', { dragging: !L.Browser.mobile, zoomControl: false }).setView([37.97688, 23.71871], 13);
                                     var markers = new L.FeatureGroup();
                                     map.addLayer(markers);
 

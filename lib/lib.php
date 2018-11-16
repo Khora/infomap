@@ -326,8 +326,7 @@
                 $filterOnFavoritesString = "delayTimeMs = 500;
                                             doTaskAfterTimeWhenNotRescheduled('searchTable(false, true)', delayTimeMs);
                                             doTaskAfterTimeWhenNotRescheduled('updateAllStarImages()', delayTimeMs);
-                                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(false)', delayTimeMs);
-                                            doTaskAfterTimeWhenNotRescheduled('filterMapOnFavorites()', delayTimeMs);";
+                                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(false)', delayTimeMs);";
             } else {
                 $filterOnFavoritesString = "delayTimeMs = 500;
                                             doTaskAfterTimeWhenNotRescheduled('searchTable(false, false)', delayTimeMs);";
@@ -343,18 +342,28 @@
                 <img src="img/searchClearIcon.png" onclick="document.getElementById(\'infomapSearch\').value = \'\';' . $filterOnFavoritesString . '">&nbsp;&nbsp;
                 <img src="img/searchGoIcon.png" onclick="' . $filterOnFavoritesString . '">
             </div>';
-
         } else {
+            $filterOnFavoritesString = "";
+            if ($filterOnFavorites) {
+                $filterOnFavoritesString = "delayTimeMs = 500;
+                                            doTaskAfterTimeWhenNotRescheduled('searchTable(true, true)', delayTimeMs);
+                                            doTaskAfterTimeWhenNotRescheduled('updateAllStarImages()', delayTimeMs);
+                                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(true)', delayTimeMs);";
+            } else {
+                $filterOnFavoritesString = "delayTimeMs = 500;
+                                            doTaskAfterTimeWhenNotRescheduled('searchTable(true, false)', delayTimeMs);";
+            }
+            
             return '<div id="searchImage">
                 <img src="img/searchIcon.png"">
             </div>
             <div id="search">
-                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="searchTable(true, false)">
+                <input type="text" id="infomapSearch" placeholder="search..." onkeyup="' . $filterOnFavoritesString . '">
             </div>
             <div id="searchGo">
-                <img src="img/searchGoIcon.png" onclick="searchTable(true, false)">
+                <img src="img/searchClearIcon.png" onclick="document.getElementById(\'infomapSearch\').value = \'\';' . $filterOnFavoritesString . '">&nbsp;&nbsp;
+                <img src="img/searchGoIcon.png" onclick="' . $filterOnFavoritesString . '">
             </div>';
-
         }
     }
     

@@ -13,23 +13,41 @@
     </head>
     <body>
         <?php
-            echo getSearch(false);
-            echo getTopArea(i18n("infomap"));
+            $favoritePage = false;
+            if (isset($_GET["isFavorites"])) {
+                if (strcmp($_GET["isFavorites"], "true") == 0) {
+                    $favoritePage = true;
+                }
+            }
+            
+            echo getSearch($favoritePage);
+            
+            if (!$favoritePage) {
+                echo getTopArea(i18n("infomap"));
+            } else {
+                echo getTopArea(i18n("favorites"));
+            }
         ?>
         <div id="content">
             <?php
                 if (!isMobile()) {
-                    echo "<table style='margin-bottom: 10px;'>
-                            <td style='padding-top: 2px;'>
+                    echo "<table style='margin-bottom: 10px;'>";
+                    if (!$favoritePage) {
+                        echo "<td style='padding-top: 2px;'>
                                 <img src='img/arrowDown.png'>
                             </td>
                             <td style='padding: 0px;'>
                                 " . getButton("&nbsp;&nbsp;&nbsp;&nbsp;" . i18n("toggleAll"), "img/starOn.png", "toggleAllCurrentlyVisibleAndUpdateStarImages(false);") . "
                             </td>
                             <td style='padding-left: 20px;'>
-                                " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='favorites.php';") . "
-                            </td>
-                            <td style='padding-left: 20px;'>
+                                " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='infomap.php?isFavorites=true';") . "
+                            </td>";
+                    } else {
+                        echo "<td style='padding-left: 5px;'>
+                                " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
+                            </td>";
+                    } 
+                    echo "<td style='padding-left: 20px;'>
                                 " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
                             </td>
                             <td style='padding-left: 20px;'>
@@ -44,32 +62,54 @@
                         </table>";
                 } else {
                     echo "<table style='width: 100%; margin-bottom: 10px;'>
-                            <tr>
-                                <td style='padding-left: 1mm;'>
-                                    " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='favorites.php';") . "
-                                </td>
-                                <td style='padding-right: 1mm'>
+                            <tr>";
+                    if (!$favoritePage) {
+                        echo "<td style='padding-left: 1mm;'>
+                                    " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='infomap.php?isFavorites=true';") . "
+                                </td>";
+                    } else {
+                        echo "<td style='padding-left: 1mm;'>
+                                    " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
+                                </td>";
+                    } 
+                    echo "<td style='padding-right: 1mm'>
                                     " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(true);") . "
                                 </td>
                             </tr>
                         </table>
                         <table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
-                                <td style='padding-left: calc(50% - 20mm); text-align: center;'>
+                                <td style='padding-left: 1mm;'>
                                     " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                                 </td>
-                            </tr>
-                        </table>
-                        <table style='width: 100%; margin-bottom: 10px; padding: 1mm;'>
-                            <tr>
-                                <td style='text-align: right;  padding: 0px;'>
-                                    " . getButton("&nbsp;&nbsp;&nbsp;&nbsp;" . i18n("toggleAll"), "img/starOn.png", "toggleAllCurrentlyVisibleAndUpdateStarImages(true);") . "
-                                </td>
-                                <td style='text-align: right;'>
-                                    <img src='img/arrowDown.png'>
+                                <td style='padding-right: 1mm'>
+                                    " . getButton(i18n("toggleMapView"), "img/locationToggle.png", "toggleMapView();") . "
                                 </td>
                             </tr>
                         </table>";
+                    if (!$favoritePage) {
+                        echo "<table style='width: 100%; margin-bottom: 10px; padding: 1mm;'>
+                                <tr>
+                                    <td style='text-align: left;  padding: 0px;'>
+                                        " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
+                                    </td>
+                                    <td style='text-align: left; padding: 1mm;'>
+                                        " . getButton("&nbsp;&nbsp;&nbsp;&nbsp;" . i18n("toggleAll"), "img/starOn.png", "toggleAllCurrentlyVisibleAndUpdateStarImages(true);") . "
+                                    </td>
+                                    <td style='text-align: right;'>
+                                        <img src='img/arrowDown.png'>
+                                    </td>
+                                </tr>
+                            </table>";
+                    } else {
+                        echo "<table style='width: 100%; margin-bottom: 10px; padding: 1mm;'>
+                                <tr>
+                                    <td style='text-align: right;  padding: 0px;'>
+                                        " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
+                                    </td>
+                                </tr>
+                            </table>";
+                    }
                 }
             
                 if (!isMobile()) {
@@ -84,7 +124,9 @@
                 
                 echo "<script>
                             rescaleHeight();
-                            document.getElementById('tableDiv').style.display = 'block';
+                            if (document.getElementById('tableDiv') !== null) {
+                                document.getElementById('tableDiv').style.display = 'block';
+                            }
                             document.getElementById('map').style.display = 'block';
                         </script>";
                 
@@ -112,10 +154,14 @@
                                 var hideMapNow = (document.getElementById('map').style.display == 'block');
                                 if (hideMapNow) {
                                     document.getElementById('map').style.display = 'none';
-                                    document.getElementById('tableDiv').style.width = width - 15 + 'px';
+                                    if (document.getElementById('tableDiv') !== null) {
+                                        document.getElementById('tableDiv').style.width = width - 15 + 'px';
+                                    }
                                 } else {
                                     document.getElementById('map').style.display = 'block';
-                                    document.getElementById('tableDiv').style.width = width / 2 - 10 + 'px';
+                                    if (document.getElementById('tableDiv') !== null) {
+                                        document.getElementById('tableDiv').style.width = width / 2 - 10 + 'px';
+                                    }
                                 }
                                 
                                 if (map !== null && map !== undefined) {
@@ -126,7 +172,23 @@
                             if (map !== null && map !== undefined) {
                                 map.invalidateSize();
                             }
+                        </script>";  
+                        
+                if ($favoritePage) {
+                    echo "<script>
+                            delayTimeMs = 250;
+                            doTaskAfterTimeWhenNotRescheduled('searchTable(' + isMobileOrTablet() + ', true)', delayTimeMs);
+                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(' + isMobileOrTablet() + ')', delayTimeMs);
+                            searchTable(isMobileOrTablet(), true);
+                            hideAllInTableThatAreNotFavorites(isMobileOrTablet());
                         </script>";
+                } else {
+                    echo "<script>
+                            delayTimeMs = 250;
+                            doTaskAfterTimeWhenNotRescheduled('searchTable(' + isMobileOrTablet() + ', false)', delayTimeMs);
+                            searchTable(isMobileOrTablet(), false);
+                        </script>";
+                }
                 
                 /*
                  * Gets a searchable table with the content from the cached Google Spreadsheet.
@@ -149,7 +211,7 @@
                     for ($i = 1; $i < count($dataEnglish); $i++) {
                         $backgroundColor = "#FFFFFF";
                         if ($i % 2 == 0) {
-                            $backgroundColor = "#F1F1F1";
+                            $backgroundColor = "#D0D0D0";
                         }
                         $retVal = $retVal . "<tr>";
                         for ($j = 0; $j < $previewCount; $j++) {
@@ -234,7 +296,7 @@
                 function getLeafletMap() {
                     return '<div id="map" style="width: 100%; height: 380px;">
                                 <script>
-                                    var map = L.map(\'map\').setView([37.97688, 3.71871], 13);
+                                    var map = L.map(\'map\', { dragging: !L.Browser.mobile }).setView([37.97688, 23.71871], 13);
                                     var markers = new L.FeatureGroup();
                                     map.addLayer(markers);
 
@@ -299,8 +361,10 @@
                                         var height = window.innerHeight
                                                                 || document.documentElement.clientHeight
                                                                 || document.body.clientHeight;
-                                                    document.getElementById("tableDiv").style.height = height - 395 + "px";
                                                     document.getElementById("map").style.height = height - 395 + "px";
+                                                    if (document.getElementById("tableDiv") !== null) {
+                                                        document.getElementById("tableDiv").style.height = height - 395 + "px";
+                                                    }
                                     }
                                     
                                     window.onresize = function(event) {
