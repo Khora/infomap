@@ -11,8 +11,8 @@
      * Initialisation method, to be called first.
      */
     function initSessionVariables() {
-        // how old (in seconds) data may be at most (7 days)
-        $_SESSION["dataExpiryTimeSeconds"] = 7 * 24 * 60 * 60;
+        // how old (in seconds) data may be at most (14 days)
+        $_SESSION["dataExpiryTimeSeconds"] = 14 * 24 * 60 * 60;
         
         // cache for the lat long geocoded positions of addresses
         $_SESSION["dataCacheGeocodedPositionOfAddresses"] = "downloads/idsToAdressLocationsMapping.json";
