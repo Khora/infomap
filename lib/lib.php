@@ -488,6 +488,18 @@
         return $defaultArray[$i][$j];
     }
     
+    /*
+     * Returns a sub array from the given one from start value (including) to end value (excluding).
+     * If it comes across an index out of bounds, it returns what it got until then.
+     */
+    function subArray($array, $start, $end) {
+        $retArray = array();
+        for ($i = $start; $i < $end && $i < sizeof($array); $i++) {
+            array_push($retArray, $array[$i]);
+        }
+        return $retArray;
+    }
+    
     function error($message) {
         echo "<p style='z-index: 50005;font-size: 60px; background-color: red;'>ERROR: " . $message . "</p>";
     }

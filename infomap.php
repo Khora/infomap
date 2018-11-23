@@ -116,14 +116,15 @@
                     echo "<table style='width: 100%;'>
                             <tr>
                                 <td style='width: 50%; vertical-align: top;'><div id='tableDiv' style='overflow-y: scroll;'>" . getTableWithContentFromSpreadsheet() . "</div></td>
-                                <td style='width: 50%; vertical-align: top;'>" . getLeafletMap() . "</td>
+                                <td style='width: 50%; vertical-align: top;'>" . getLeafletMap(isMobile()) . "</td>
                             </tr>";
                 } else {
-                    echo getLeafletMap() . "<br><br><br>" . getMobileTableWithContentFromSpreadsheet();
+                    echo getLeafletMap(isMobile()) . "<br><br><br>" . getMobileTableWithContentFromSpreadsheet();
                 }
                 
                 echo "<script>
-                            rescaleHeight();
+                            delayTimeMs = 500;
+                            doTaskAfterTimeWhenNotRescheduled('rescaleHeight()', delayTimeMs);
                             if (document.getElementById('tableDiv') !== null) {
                                 document.getElementById('tableDiv').style.display = 'block';
                             }
@@ -173,20 +174,25 @@
                                 map.invalidateSize();
                             }
                         </script>";  
-                        
+                
+                $mobileString = "true";
+                if (!isMobile()) {
+                    $mobileString = "false";
+                }
+                
                 if ($favoritePage) {
                     echo "<script>
                             delayTimeMs = 250;
-                            doTaskAfterTimeWhenNotRescheduled('searchTable(' + isMobileOrTablet() + ', true)', delayTimeMs);
+                            doTaskAfterTimeWhenNotRescheduled('searchTable(" . $mobileString . ", true)', delayTimeMs);
                             doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(' + isMobileOrTablet() + ')', delayTimeMs);
-                            searchTable(isMobileOrTablet(), true);
+                            searchTable(" . $mobileString . ", true);
                             hideAllInTableThatAreNotFavorites(isMobileOrTablet());
                         </script>";
                 } else {
                     echo "<script>
                             delayTimeMs = 250;
-                            doTaskAfterTimeWhenNotRescheduled('searchTable(' + isMobileOrTablet() + ', false)', delayTimeMs);
-                            searchTable(isMobileOrTablet(), false);
+                            doTaskAfterTimeWhenNotRescheduled('searchTable(" . $mobileString . ", false)', delayTimeMs);
+                            searchTable(" . $mobileString . ", false);
                         </script>";
                 }
                 
@@ -293,10 +299,14 @@
                 /*
                  * Gets a leaflet map with the possibility to place markers on positions.
                  */
-                function getLeafletMap() {
+                function getLeafletMap($isMobile) {
+                    $mobileString = "true";
+                    if (!$isMobile) {
+                        $mobileString = "false";
+                    }
                     return '<div id="map" style="width: 100%; height: 380px;">
                                 <script>
-                                    var map = L.map(\'map\', { dragging: !L.Browser.mobile }).setView([37.97688, 23.71871], 13);
+                                    var map = L.map(\'map\', {  dragging: !L.Browser.mobile, zoomControl: !L.Browser.mobile }).setView([37.97688, 23.71871], 13);
                                     var markers = new L.FeatureGroup();
                                     map.addLayer(markers);
 
@@ -323,7 +333,7 @@
                                         });
                                         m.on("click", function (e) {
                                             document.getElementById("infomapSearch").value = text;
-                                            searchTable(false, false);
+                                            searchTable(' . $mobileString . ', false);
                                         });
                                         m.openPopup();
                                         
@@ -365,10 +375,14 @@
                                                     if (document.getElementById("tableDiv") !== null) {
                                                         document.getElementById("tableDiv").style.height = height - 395 + "px";
                                                     }
+                                        if (isMobileOrTablet()) {
+                                            document.getElementById("map").style.height = "100mm";
+                                        }
                                     }
                                     
                                     window.onresize = function(event) {
-                                        rescaleHeight();
+                                        delayTimeMs = 500;
+                                        doTaskAfterTimeWhenNotRescheduled("rescaleHeight()", delayTimeMs);
                                     };
                                 </script>
                             </div>';
