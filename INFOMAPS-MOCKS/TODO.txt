@@ -1,8 +1,3 @@
-i18n von leuten anfragen!
+i18n translations!
 
-wochentage i18n -> translation service
-
-what must go into help content?
-
-what do we do with the private information like the download link for google drive or the keys for the apis?
--> currently this is in the repo publicly available
+help content! + translations

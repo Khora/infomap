@@ -49,11 +49,17 @@
                     } 
                     echo "<td style='padding-left: 20px;'>
                                 " . getButton(i18n("clearAll"), "img/clear.png", "clearFavorites();") . "
-                            </td>
-                            <td style='padding-left: 20px;'>
+                            </td>";
+                    if (!$favoritePage) {
+                        echo "<td style='padding-left: 20px;'>
                                 " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(false);") . "
-                            </td>
-                            <td style='padding-left: 20px; position: absolute; right: 75mm;'>
+                            </td>";
+                    } else {
+                        echo "<td style='padding-left: 20px;'>
+                                " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getFavorites();") . "
+                            </td>";
+                    }
+                    echo "<td style='padding-left: 20px; position: absolute; right: 75mm;'>
                                 " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
                             </td>
                             <td style='padding-left: 20px; position: absolute; right: 0;'>
@@ -66,24 +72,24 @@
                     if (!$favoritePage) {
                         echo "<td style='padding-left: 1mm;'>
                                     " . getButton(i18n("favorites"), "img/starInactive.png", "document.location='infomap.php?isFavorites=true';") . "
+                                </td>
+                                <td style='padding-right: 1mm'>
+                                    " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(true);") . "
                                 </td>";
                     } else {
                         echo "<td style='padding-left: 1mm;'>
                                     " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
+                                </td>
+                                <td style='padding-right: 1mm'>
+                                    " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getFavorites();") . "
                                 </td>";
                     } 
-                    echo "<td style='padding-right: 1mm'>
-                                    " . getButton(i18n("exportToPdf"), "img/printer.png", "document.location='export.php?ids=' + getCurrentlyVisible(true);") . "
-                                </td>
-                            </tr>
+                    echo "    </tr>
                         </table>
                         <table style='width: 100%; margin-bottom: 10px;'>
                             <tr>
                                 <td style='padding-left: 1mm;'>
                                     " . getButton(i18n("mapView"), "img/location.png", "document.location='mapview.php';") . "
-                                </td>
-                                <td style='padding-right: 1mm'>
-                                    " . getButton(i18n("toggleMapView"), "img/locationToggle.png", "toggleMapView();") . "
                                 </td>
                             </tr>
                         </table>";
@@ -119,7 +125,7 @@
                                 <td style='width: 50%; vertical-align: top;'>" . getLeafletMap(isMobile()) . "</td>
                             </tr>";
                 } else {
-                    echo getLeafletMap(isMobile()) . "<br><br><br>" . getMobileTableWithContentFromSpreadsheet();
+                    echo getMobileTableWithContentFromSpreadsheet();
                 }
                 
                 echo "<script>
@@ -128,7 +134,9 @@
                             if (document.getElementById('tableDiv') !== null) {
                                 document.getElementById('tableDiv').style.display = 'block';
                             }
-                            document.getElementById('map').style.display = 'block';
+                            if (document.getElementById('map') !== null) {
+                                document.getElementById('map').style.display = 'block';
+                            }
                         </script>";
                 
                 $addressesData = array();
@@ -144,7 +152,7 @@
                             var namesData = " . json_encode($namesData) . "
                             var addressesData = " . json_encode($addressesData) . "
                             for (i = 0; i < Object.keys(geoPositionsOfAddresses).length; i++) {
-                                addMarkerToLeafletMap(geoPositionsOfAddresses[i + 1][0], geoPositionsOfAddresses[i + 1][1], (i + 1).toString(), namesData[i], 'red');
+                                //addMarkerToLeafletMap(geoPositionsOfAddresses[i + 1][0], geoPositionsOfAddresses[i + 1][1], (i + 1).toString(), namesData[i], 'red');
                             }";
                 
                 echo "function toggleMapView() {
@@ -184,9 +192,9 @@
                     echo "<script>
                             delayTimeMs = 250;
                             doTaskAfterTimeWhenNotRescheduled('searchTable(" . $mobileString . ", true)', delayTimeMs);
-                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(' + isMobileOrTablet() + ')', delayTimeMs);
+                            doTaskAfterTimeWhenNotRescheduled('hideAllInTableThatAreNotFavorites(" . $mobileString . ")', delayTimeMs);
                             searchTable(" . $mobileString . ", true);
-                            hideAllInTableThatAreNotFavorites(isMobileOrTablet());
+                            hideAllInTableThatAreNotFavorites(" . $mobileString . ");
                         </script>";
                 } else {
                     echo "<script>
@@ -378,11 +386,19 @@
                                         if (isMobileOrTablet()) {
                                             document.getElementById("map").style.height = "100mm";
                                         }
+                                
+                                        if (map !== null && map !== undefined) {
+                                            map.invalidateSize();
+                                        }
                                     }
                                     
                                     window.onresize = function(event) {
                                         delayTimeMs = 500;
                                         doTaskAfterTimeWhenNotRescheduled("rescaleHeight()", delayTimeMs);
+                                
+                                        if (map !== null && map !== undefined) {
+                                            map.invalidateSize();
+                                        }
                                     };
                                 </script>
                             </div>';

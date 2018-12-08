@@ -17,6 +17,22 @@
         // cache for the lat long geocoded positions of addresses
         $_SESSION["dataCacheGeocodedPositionOfAddresses"] = "downloads/idsToAdressLocationsMapping.json";
         
+        // data source
+        $spreadsheetId = getFileContent("config/spreadsheetId.txt");
+        $englishGid = getFileContent("config/englishGid.txt");
+        $arabicGid = getFileContent("config/arabicGid.txt");
+        $farsiGid = getFileContent("config/farsiGid.txt");
+        $greekGid = getFileContent("config/greekGid.txt");
+        $frenchGid = getFileContent("config/frenchGid.txt");
+        $urduGid = getFileContent("config/urduGid.txt");
+        $kurdishGid = getFileContent("config/kurdishGid.txt");
+        
+        // api keys
+        $_SESSION["mapboxApiToken"] = getFileContent("config/mapboxApiToken.txt");
+        $_SESSION["mapQuestApiKey"] = getFileContent("config/mapQuestApiKey.txt");
+        $_SESSION["pdfShiftIoApiKey"] = getFileContent("config/pdfShiftIoApiKey.txt");
+        
+        
         // where to save the data cache to
         $_SESSION["dataCacheFilePathEnglish"] = "downloads/currentDataCacheEnglish.csv";
         $_SESSION["dataCacheFilePathArabic"] = "downloads/currentDataCacheArabic.csv";
@@ -28,13 +44,13 @@
         
         // this is the data source for the PHP system, it is read-only because of the parameter "export"
         // so from the PHP system's point of view no possibility to change anything there (for security reasons)
-        $_SESSION["spreadsheetUrlEnglish"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=0";
-        $_SESSION["spreadsheetUrlArabic"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=272972858";
-        $_SESSION["spreadsheetUrlFarsi"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=2092257293";
-        $_SESSION["spreadsheetUrlGreek"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=1538519839";
-        $_SESSION["spreadsheetUrlFrench"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=2011609971";
-        $_SESSION["spreadsheetUrlUrdu"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=1531450539";
-        $_SESSION["spreadsheetUrlKurdish"] = "https://docs.google.com/spreadsheets/d/1gknk1sQaYNBDdisf2Aj0jmxKdyIx9PrDOArB-oeWxwk/export?format=csv&gid=1847047387";
+        $_SESSION["spreadsheetUrlEnglish"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $englishGid;
+        $_SESSION["spreadsheetUrlArabic"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $arabicGid;
+        $_SESSION["spreadsheetUrlFarsi"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $farsiGid;
+        $_SESSION["spreadsheetUrlGreek"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $greekGid;
+        $_SESSION["spreadsheetUrlFrench"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $frenchGid;
+        $_SESSION["spreadsheetUrlUrdu"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $urduGid;
+        $_SESSION["spreadsheetUrlKurdish"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $kurdishGid;
         
         // get if the client is a mobile device
         $mobile = "false";
@@ -448,8 +464,8 @@
     
     function mapquestGeocodeApiAddressToLocation($addressString) {
         // TODO extract constant strings
-        // example: http://www.mapquestapi.com/geocoding/v1/address?key=1KAc2n9SOCMZD7dAO8hj2egYO4JZwoKk&location=Stournari%2014,Athens,Greece&maxResults=1
-        $url = "http://www.mapquestapi.com/geocoding/v1/address?key=1KAc2n9SOCMZD7dAO8hj2egYO4JZwoKk&location=" . urlencode($addressString) . "&maxResults=1";
+        // example: http://www.mapquestapi.com/geocoding/v1/address?key=KEY&location=Stournari%2014,Athens,Greece&maxResults=1
+        $url = "http://www.mapquestapi.com/geocoding/v1/address?key=" . $_SESSION["mapQuestApiKey"]. "&location=" . urlencode($addressString) . "&maxResults=1";
         $retStr = getFileContent(downloadFileViaCurl($url, "downloads/currentGeoCodingRequest.txt"));
         $startLat = strpos($retStr, '"lat":') + strlen('"lat":');
         $retStr = substr($retStr, $startLat);
@@ -460,7 +476,7 @@
     }
     
     function downloadStaticMapWithMarkers($center, $zoomLevel, $size, $markers) {
-        // example: https://api.mapbox.com/styles/v1/mapbox/streets-v10/static/pin-s-1+000000(23.734849,37.986317),pin-s-10+000000(23.734949,37.984317)/23.734849,37.986317,13.67,0.00,0.00/1000x600@2x?access_token=pk.eyJ1IjoiY2FlemUiLCJhIjoiY2ptdXp6d3QyMGpweDN3bzhweTZ5MjlqNyJ9.Si72Tah5nyXFdynwiSY9yg
+        // example: https://api.mapbox.com/styles/v1/mapbox/streets-v10/static/pin-s-1+000000(23.734849,37.986317),pin-s-10+000000(23.734949,37.984317)/23.734849,37.986317,13.67,0.00,0.00/1000x600@2x?access_token=TOKEN
         
         $pinString = "";
         for ($i = 0; $i < count($markers); $i++) {
@@ -470,7 +486,7 @@
             $pinString = $pinString . "pin-s-" . $i . "+000000(" . $markers[$i][1] . "," . $markers[$i][0] . ")";
         }
         
-        $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/static/" . $pinString . "/" . $center[1] . "," . $center[0] . "," . $zoomLevel . ",0.00,0.00/" . $size . "@2x?access_token=pk.eyJ1IjoiY2FlemUiLCJhIjoiY2ptdXp6d3QyMGpweDN3bzhweTZ5MjlqNyJ9.Si72Tah5nyXFdynwiSY9yg";
+        $url = "https://api.mapbox.com/styles/v1/mapbox/streets-v10/static/" . $pinString . "/" . $center[1] . "," . $center[0] . "," . $zoomLevel . ",0.00,0.00/" . $size . "@2x?access_token=" . $_SESSION["mapboxApiToken"];
         return downloadFileViaCurl($url, "downloads/map.png");
     }
     
@@ -614,7 +630,7 @@
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode(array("source" => $source, "landscape" => true, "use_print" => false)),
             CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
-            CURLOPT_USERPWD => '03e85607fee24a56b9f7b1584ca6e99a'
+            CURLOPT_USERPWD => $_SESSION["pdfShiftIoApiKey"]
         ));
         
         $data = curl_exec($c);
