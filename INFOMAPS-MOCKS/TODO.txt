@@ -1,7 +1,5 @@
 i18n translations!
 
-split by email addresses and telephone numbers if there are multiple ones inside for "callto" and "mailto"
-
 meine 3 kategorien durchchecken
 
 help content! + translations
