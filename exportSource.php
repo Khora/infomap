@@ -32,13 +32,15 @@
                 
                 $addressesData = array();
                 $namesData = array();
+                // fetch the data from the cached spreadsheet in the given language
+                $data = getFileContentAsCsv($_SESSION["dataCacheFilePath" . getLanguage()]);
                 $dataEnglish = getFileContentAsCsv($_SESSION["dataCacheFilePathEnglish"]);
                 for ($i = 1; $i < count($dataEnglish); $i++) {
                     array_push($namesData, $dataEnglish[$i][2]);
                     array_push($addressesData, $dataEnglish[$i][4]);
                 }
                 
-                echo '<center style="font-size: 25px;"><br></center><center style="font-size: 50px;"><img src="img/khoraLogo.png" style="height: 40px;">&nbsp;&nbsp;&nbsp;Khora Infomap&nbsp;-&nbsp;' . $language . '&nbsp;&nbsp;&nbsp;<img src="img/' . $flagImage . '" style="height: 40px;"><center><center style="font-size: 25px;"><br></center>';
+                echo '<center style="font-size: 25px;"><br></center><center style="font-size: 50px;"><img src="img/khoraLogo.png" style="height: 40px;">&nbsp;&nbsp;&nbsp;Khora Infomap&nbsp;-&nbsp;' . $language . '&nbsp;&nbsp;&nbsp;<img src="img/' . $flagImage . '" style="height: 40px;"></center><center style="font-size: 25px;"><br></center>';
                 echo getLeafletMap() . '<center style="font-size: 25px;"><br><br></center>';
                 
                 // determine which ids to export from get params
@@ -50,119 +52,57 @@
                     }
                 }
                 
-                // fetch the data from the cached spreadsheet in the given language
-                $data = getFileContentAsCsv($_SESSION["dataCacheFilePath" . getLanguage()]);
-                $dataEnglish = getFileContentAsCsv($_SESSION["dataCacheFilePathEnglish"]);
                 if (count($data) == 0 || count($dataEnglish) == 0) {
                     error("NO DATA FETCHED");
                 }
                 
-                // fetch the names for each table header
-                $header = array();
-                for ($i = 0; $i < count($dataEnglish[0]); $i++) {
-                    array_push($header, getOrDefault($data, $dataEnglish, 0, $i));
-                }
-                
-                // create an array with all fields filled for all the ids that shall be exported
-                $dataToUse = array();
-                for ($i = 0; $i < count($dataEnglish); $i++) {
-                    $line = array();
-                    for ($j = 0; $j < count($dataEnglish[$i]); $j++) {
-                        if (count($idsToExport) == 0 || in_array(strval($i), $idsToExport)) {
-                            array_push($line, getOrDefault($data, $dataEnglish, $i, $j));
-                        }
-                    }
-                    if (sizeof($line) != 0) {
-                        array_push($dataToUse, $line);
-                    }
-                }
-                
-                // build the page divs with the tables
-                $height = 792;
-                $numberOfDatasetsPerPage = 5;
-                for ($i = 0; $i < sizeof($dataToUse); $i = $i + $numberOfDatasetsPerPage) {
-                    $id = 'content' . ($i);
-                    echo '<div id=' . $id . ' style="margin: 0px; padding: 0px; top: ' . $i * $height . 'px; left: 0px; width: 100%; height: ' . $height . 'px;">';
-                    
-                    $dataToUseTmp = array($header);
-                    $dataToUseTmp2 = array();
-                    $dataToUseTmp2 = subArray($dataToUse, $i, $i + $numberOfDatasetsPerPage);
-                    for ($j = 0; $j < sizeof($dataToUseTmp2); $j++) {
-                        array_push($dataToUseTmp, $dataToUseTmp2[$j]);
-                    }
-                    echo getOnePageTable($dataToUseTmp);
-                    //echo (sizeof($dataToUseTmp2) . " .. ");
-                    //echo ($i . " .. " . ($i + $numberOfDatasetsPerPage));
-                    echo '</div>';
-                }
-                
-                // put out some resizing javascripts
-                echo "<script>
-                            document.getElementById('map').style.display = 'block';
-                            rescaleHeight();
-                        </script>";
-                
-                echo "<script>
-                            var geoPositionsOfAddresses = " . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . "
-                            var namesData = " . json_encode($namesData) . "
-                            var addressesData = " . json_encode($addressesData) . "
-                            for (i = 0; i < Object.keys(geoPositionsOfAddresses).length; i++) {
-                                addMarkerToLeafletMap(geoPositionsOfAddresses[i + 1][0], geoPositionsOfAddresses[i + 1][1], (i + 1).toString(), namesData[i], 'red');
-                            }
-                        </script>";
-                
-                /*
-                 * Gets one page of a table with the content from the cached Google Spreadsheet.
-                 */
-                function getOnePageTable($data) {
-                    // how many columns do we want to present in the list?
-                    $previewCount = 6;
-                    
-                    // construct an HTML table with the given information
-                    $retVal = "<table id='table' class='gridtable' style='width: 100%;'> <tr>";
-                    $retVal = $retVal . "<th style='color: #ffffff; background-color: #555555;'>ID</th>";
-                    for ($i = 1; $i < $previewCount - 1; $i++) {
-                        $retVal = $retVal . "<th>" . htmlspecialchars($data[0][$i]) . "</th>";
-                    }
-                    $retVal = $retVal . "</tr>";
-                    for ($i = 1; $i < count($data); $i++) {
-                        $backgroundColor = "#FFFFFF";
-                        if ($i % 2 == 0) {
-                            $backgroundColor = "#D0D0D0";
-                        }
-                        $retVal = $retVal . "<tr>";
-                        for ($j = 0; $j < $previewCount; $j++) {
-                            if ($j !== 5) {
-                                if ($j == 1) {
-                                    $retVal = $retVal . "<td style='border: 0px; background-color: " . $backgroundColor . ";'><i>" . htmlspecialchars($data[$i][$j]) . "</i></td>";
-                                } else if ($j == 2) {
-                                    $retVal = $retVal . "<td style='border: 0px; background-color: " . $backgroundColor . ";'><b>" .  htmlspecialchars($data[$i][$j]) . "</b></td>";
-                                } else if ($j == 4) {
-                                    $retVal = $retVal . "<td rowspan='2' style='border: 0px; background-color: " . $backgroundColor . ";'>" .  htmlspecialchars($data[$i][$j]) . "</td>";
-                                } else {
-                                    $retVal = $retVal . "<td style='border: 0px; background-color: " . $backgroundColor . ";'>" .  htmlspecialchars($data[$i][$j]) . "</td>";
+                $sizeOfPageInPx = 793;
+                $currentPaddingTop = $sizeOfPageInPx;
+                for ($i = 0; $i < count($idsToExport) / 9; $i++) {
+                    for ($j = 0; $j < 3; $j++) {
+                        if ((9 * $i + 3 * $j) < count($idsToExport)) {
+                            echo '<div id="content' . $i . $j . '" style="position: absolute; margin: 0px; padding: 0px; top: ' . $currentPaddingTop . 'px; left: ' . ($j * 33) . '%; width: 33%; height: 792px;">';
+                            for ($k = 0; $k < 3; $k++) {
+                                $currentPointer = (9 * $i + 3 * $j + $k);
+                                if ($currentPointer < count($idsToExport)) {
+                                    echo '<div style="margin: 20px; padding: 20px;">
+                                            <b>' . $idsToExport[$currentPointer] . '. ' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 2)) . '</b><br>';
+                                    if (htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 4)) != '') {
+                                        echo '<b>' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 4)) . '</b><br>';
+                                    }
+                                    if (htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 5)) != '') {
+                                        echo '<img src="img/info.png" style="height: 11px;"> ' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 5)) . '<br>';
+                                    }
+                                    if (htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 3)) != '') {
+                                        echo '<img src="img/clock.png" style="height: 11px;"> ' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 3)) . '<br>';
+                                    }
+                                    if (htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 7)) != '') {
+                                        echo '<img src="img/envelope.png" style="height: 11px;"> ' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 7)) . '<br>';
+                                    }
+                                    if (htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 8)) != '') {
+                                        echo '<img src="img/phone.png" style="height: 11px;"> ' . htmlspecialchars(getOrDefault($data, $dataEnglish, $idsToExport[$currentPointer], 8)) . '<br>';
+                                    }
+                                    echo '</div>';
                                 }
                             }
+                            echo '</div>';
                         }
-                        $retVal = $retVal . "</tr>\n";
-                        
-                        $retVal = $retVal . "<tr>";
-                        $retVal = $retVal . "<td style=' background-color: " . $backgroundColor . "; border: 0px;'></td>";
-                        $retVal = $retVal . "<td style=' background-color: " . $backgroundColor . "; border: 0px;' colspan='" . ($previewCount - 3) . "'>" .  htmlspecialchars($data[$i][5]) . "</td>";
-                        $retVal = $retVal . "</tr>\n";
-                        $retVal = $retVal . "<script>starImageElements.push(" . $i . ");</script>";
                     }
-                    
-                    $retVal = $retVal . "</table>";
-                    $retVal = $retVal . "<script>updateAllStarImages();</script>";
-                    return $retVal;
+                    $currentPaddingTop += $sizeOfPageInPx;
                 }
+                
+                echo '<script>';
+                echo 'var geoPositionsOfAddresses = ' . getFileContent($_SESSION["dataCacheGeocodedPositionOfAddresses"]) . ';';
+                for ($i = 0; $i < count($idsToExport); $i++) {
+                    echo 'showInMap(' . $idsToExport[$i] . ');';
+                }
+                echo '</script>';
                 
                 /*
                  * Gets a leaflet map with the possibility to place markers on positions.
                  */
                 function getLeafletMap() {
-                    return '<div id="map" style="width: 100%; height: 380px;">
+                    return '<div id="map" style="width: 100%; height: 600px;">
                                 <script>
                                     var map = L.map(\'map\', { dragging: !L.Browser.mobile, zoomControl: false }).setView([37.97688, 23.71871], 13);
                                     var markers = new L.FeatureGroup();
@@ -185,8 +125,10 @@
                                         
                                         markersMap.set(id, m);
                                         
-                                        var group = new L.featureGroup([ ...markersMap.values() ]);
-                                        map.fitBounds(group.getBounds());
+                                        var athensNorthWestCorner = [38.020431, 23.677112];
+                                        var athensSouthEastCorner = [37.958107, 23.785241];
+                                        var bounds = new L.LatLngBounds([athensNorthWestCorner, athensSouthEastCorner]);
+                                        map.fitBounds(bounds, { padding: [20, 20] });
                                     }
                                     
                                     function removeMarkerFromLeafletMap(id) {
@@ -209,7 +151,7 @@
                                     
                                     function showInMap(id) {
                                         if (id !== null && id !== undefined && geoPositionsOfAddresses[id] !== null && geoPositionsOfAddresses[id] !== undefined && geoPositionsOfAddresses[id][0] !== null && geoPositionsOfAddresses[id][0] !== undefined && geoPositionsOfAddresses[id][1] !== null && geoPositionsOfAddresses[id][1] !== undefined) {
-                                            addMarkerToLeafletMap(geoPositionsOfAddresses[id][0], geoPositionsOfAddresses[id][1], id.toString(), namesData[id - 1], "red");
+                                            addMarkerToLeafletMap(geoPositionsOfAddresses[id][0], geoPositionsOfAddresses[id][1], id.toString(), "", "red");
                                         }
                                     }
                                     

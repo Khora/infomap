@@ -68,13 +68,29 @@
                                     <td>" . $details['description'] . "</td>
                                 </tr>
                                 <tr>
-                                    <td>" . i18n("emailAddress") . "</td>
-                                    <td><a href='mailto:" . $details['emailAddress'] . "'>" . $details['emailAddress'] . "</td>
-                                </tr>
+                                    <td>" . i18n("emailAddress") . "</td>";
+                                    $text = "<td>" . $details['emailAddress'] . "</td>";
+                                    $matches = array();
+                                    preg_match_all("/[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})/i", $text, $matches);
+                                    $matches = $matches[0];
+                                    for ($i = 0; $i < count($matches); $i++) {
+                                        $text = str_replace($matches[$i] , "<a href='mailto:" . $matches[$i] . "'>" . $matches[$i] . "</a>" , $text);
+                                    }
+                                    $text = str_replace("\n", "<br>", $text);
+                                    echo $text;
+                        echo    "</tr>
                                 <tr>
-                                    <td>" . i18n("phoneNumber") . "</td>
-                                    <td><a href='tel:" . $details['phoneNumber'] . "'>" . $details['phoneNumber'] . "</td>
-                                </tr>
+                                    <td>" . i18n("phoneNumber") . "</td>";
+                                    $text = "<td>" . $details['phoneNumber'] . "</td>";
+                                    $matches = array();
+                                    preg_match_all("/\+?[\+]*[\(]*[\+]*[0-9][0-9()\-\s+]{4,20}[0-9]/i", $text, $matches);
+                                    $matches = $matches[0];
+                                    for ($i = 0; $i < count($matches); $i++) {
+                                        $text = str_replace($matches[$i] , "<a href='tel:" . $matches[$i] . "'>" . $matches[$i] . "</a>" , $text);
+                                    }
+                                    $text = str_replace("\n", "<br>", $text);
+                                    echo $text;
+                        echo    "</tr>
                                 <tr>
                                     <td>" . i18n("website") . "</td>
                                     <td><a href='" . $details['website'] . "'>" . $details['website'] . "</td>
@@ -169,18 +185,34 @@
                                 <tr>
                                     <th>" . i18n("emailAddress") . "</th>
                                 </tr>
-                                <tr>
-                                    <td><a href='mailto:" . $details['emailAddress'] . "'>" . $details['emailAddress'] . "</td>
-                                <tr>
+                                <tr>";
+                                    $text = "<td>" . $details['emailAddress'] . "</td>";
+                                    $matches = array();
+                                    preg_match_all("/[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})/i", $text, $matches);
+                                    $matches = $matches[0];
+                                    for ($i = 0; $i < count($matches); $i++) {
+                                        $text = str_replace($matches[$i] , "<a href='mailto:" . $matches[$i] . "'>" . $matches[$i] . "</a>" , $text);
+                                    }
+                                    $text = str_replace("\n", "<br>", $text);
+                                    echo $text;
+                        echo    "</tr>
                             </table>
                             
                             <table id='table' class='gridtable' style='margin: 5mm; width: calc(100% - 10mm);'>
                                 <tr>
                                     <th>" . i18n("phoneNumber") . "</th>
                                 </tr>
-                                <tr>
-                                    <td>" . $details['phoneNumber'] . "</td>
-                                <tr>
+                                <tr>";
+                                    $text = "<td>" . $details['phoneNumber'] . "</td>";
+                                    $matches = array();
+                                    preg_match_all("/\+?[\+]*[\(]*[\+]*[0-9][0-9()\-\s+]{4,20}[0-9]/i", $text, $matches);
+                                    $matches = $matches[0];
+                                    for ($i = 0; $i < count($matches); $i++) {
+                                        $text = str_replace($matches[$i] , "<a href='tel:" . $matches[$i] . "'>" . $matches[$i] . "</a>" , $text);
+                                    }
+                                    $text = str_replace("\n", "<br>", $text);
+                                    echo $text;
+                        echo    "</tr>
                             </table>
                             
                             <table id='table' class='gridtable' style='margin: 5mm; width: calc(100% - 10mm);'>
