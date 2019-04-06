@@ -36,10 +36,10 @@ e.g. "2092257293"
 Put in the sheet ID for the "French" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "2011609971"
 ## greekGid.txt
-Put in the sheet ID for the "French" tab of the Google Spreadsheet containing the data for the infomap.
+Put in the sheet ID for the "Greek" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "1538519839"
 ## kurdishGid.txt
-Put in the sheet ID for the "French" tab of the Google Spreadsheet containing the data for the infomap.
+Put in the sheet ID for the "Kurdish" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "1847047387"
 ## mapboxApiToken.txt
 Put in a mapbox API token so the system can use the mapbox API.
@@ -53,7 +53,7 @@ e.g. "13e86817fee24b56b932a1585ca3e96a"
 Put in the Google Spreadsheet ID containing the data for the infomap.
 e.g. "1O1k_JJMitnFik1h3s5eiA6VjMvuejsqCndJ_ETL8FZd"
 ## urduGid.txt
-Put in the sheet ID for the "French" tab of the Google Spreadsheet containing the data for the infomap.
+Put in the sheet ID for the "Urdu" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "1531450539"
 
 # cron job to periodically refresh the data cache
