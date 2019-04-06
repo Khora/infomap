@@ -57,8 +57,8 @@ Put in the sheet ID for the "Urdu" tab of the Google Spreadsheet containing the 
 e.g. "1531450539"
 
 # cron job to periodically refresh the data cache
-Place a shell script here: "/etc/cron.weekly"
-Put this content in the shell script: "curl localhost/<<<path-to-infomap-system>>>/infomap.php?reload=true"
+Place a shell script here: "/etc/cron.weekly".
+Put this content in the shell script: "curl localhost/"path-to-infomap-system"/infomap.php?reload=true".
 This requests the file with the reload cache flag enabled on a weekly basis.
 In doing so, it refreshes the caches and speeds up the system for everyone else.
 
