@@ -74,7 +74,7 @@ e.g. "example1@host1.com"
 Edit the cron jobs on the system with the command "crontab -e".
 Select your favorite editor by entering the corresponding number and pressing enter.
 Add this line to the end of the file and save it: "@daily curl http://khora.social.coop/infomap/infomap.php?reload=true > /dev/null"
-This requests the website with the reload cache flag enabled on a weekly basis.
+This requests the website with the reload cache flag enabled on a regular basis.
 In doing so, it refreshes the caches and speeds up the system for everyone else.
 
 # Running System
