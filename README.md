@@ -3,6 +3,10 @@ The infomap project aims to deliver information about social services in and aro
 The database (a Google Spreadsheet) behind it can be edited by those having the edit URL.
 
 # Deployment
+Create a target folder on the PHP enabled webserver on which the system shall run.
+Place that folder under where files are served by the webserver so it is accessible via http.
+Name that folder "infomap".
+Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writable by the webserver.
 Download the files from this repository according to the picture on any PHP webserver.
 Do not include these files/folders:
  - INFOMAPS-MOCKS
