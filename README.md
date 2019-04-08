@@ -71,8 +71,9 @@ Beware that some hosters have restrictions as to which addresses and especially 
 e.g. "example1@host1.com"
 
 # cron job to periodically refresh the data cache
-Place a shell script here: "/etc/cron.weekly".
-Put this content in the shell script: "curl localhost/"path-to-infomap-system"/infomap.php?reload=true".
+Place a shell script here: "/etc/cron.weekly/" and name it e.g. infomap_refresh_cache.
+Put this content in the shell script:
+"curl -s http://'server-address'/'path-to-infomap-system'/infomap.php?reload=true > /dev/null".
 This requests the file with the reload cache flag enabled on a weekly basis.
 In doing so, it refreshes the caches and speeds up the system for everyone else.
 
