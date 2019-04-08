@@ -3,14 +3,18 @@ The infomap project aims to deliver information about social services in and aro
 The database (a Google Spreadsheet) behind it can be edited by those having the edit URL.
 
 # Deployment
-Download the files from this repository according to the picture on any PHP webserver.
+Create a target folder on the PHP enabled webserver on which the system shall run.
+Place that folder under where files are served by the webserver so it is accessible via http.
+Name that folder "infomap".
+Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writeable by the webserver (via chmod).
+Download the files from this repository (Khora/infomap) and place them in the newly created "infomap" folder.
 Do not include these files/folders:
  - INFOMAPS-MOCKS
  - .gitignore
  - README.MD
  
 # Configuration
-Create a folder called "config" on the top level where the website is deployed.
+Create a folder called "config" in the "infomap" folder.
 Create the following files in it:
  - arabicGid.txt
  - englishGid.txt
@@ -23,6 +27,8 @@ Create the following files in it:
  - pdfShiftIoApiKey.txt
  - spreadsheetId.txt
  - urduGid.txt
+ - emailAddressesIncorrectData.txt
+ - senderEmailAddress.txt
 ## arabicGid.txt
 Put in the sheet ID for the "Arabic" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "272972858"
@@ -55,12 +61,21 @@ e.g. "1O1k_JJMitnFik1h3s5eiA6VjMvuejsqCndJ_ETL8FZd"
 ## urduGid.txt
 Put in the sheet ID for the "Urdu" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "1531450539"
+## emailAddressesIncorrectData.txt
+Put in the e-mail addresses of all accounts that shall receive system e-mails. The addresses have to be a comma separated list.
+If someone reports an incorrect data set, e-mails will get sent to all addresses mentioned in this file. Then, the responsible people can check the data and correct it if necessary
+e.g. "example1@host1.com,example2@host2.com,example3@host3.com,example4@host4.com"
+## senderEmailAddress.txt
+Put in the e-mail address that shall be the "sender" of all e-mails sent by the infomap system.
+Beware that some hosters have restrictions as to which addresses and especially hostnames may be chosen to be the "sender" addresses of anything sent via PHP.
+e.g. "example1@host1.com"
 
 # cron job to periodically refresh the data cache
-Place a shell script here: "/etc/cron.weekly".
-Put this content in the shell script: "curl localhost/"path-to-infomap-system"/infomap.php?reload=true".
-This requests the file with the reload cache flag enabled on a weekly basis.
+Edit the cron jobs on the system with the command "crontab -e".
+Select your favorite editor by entering the corresponding number and pressing enter.
+Add this line to the end of the file and save it: "@daily curl http://khora.social.coop/infomap/infomap.php?reload=true > /dev/null"
+This requests the website with the reload cache flag enabled on a regular basis.
 In doing so, it refreshes the caches and speeds up the system for everyone else.
 
-# Demo System
-Access a demo system here: https://mydearfear.com/infomap/infomap.php
+# Running System
+Access the running system here: http://khora.social.coop/infomap
