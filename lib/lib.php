@@ -209,7 +209,7 @@
                 <table style="width: 97%; text-align: right; margin-right: 0px; margin-left: auto;">
                     <tr>
                         <td>' . getButton(i18n("help"), "img/questionmark.png", "document.location='help.php';") . '</td>
-                        <td>' . getButton(i18n("reloadData"), "img/reload.png", "clearFavorites(); document.location='infomap.php?reload=true';") . '</td>
+                        <td><!-- ' . getButton(i18n("reloadData"), "img/reload.png", "clearFavorites(); document.location='infomap.php?reload=true';") . '--></td>
                         <td><a href="https://www.facebook.com/KhoraAthens/"><img id="socialNetworkButton" src="img/facebook.png"></a></td>
                         <td><a href="https://www.instagram.com/khoraathens/"><img id="socialNetworkButton" src="img/instagram.png"></a></td>
                         <td><a href="http://www.khora-athens.org/"><img id="socialNetworkButton" src="img/webpage.png"></a></td>
@@ -285,11 +285,6 @@
                     </tr>
                     <tr>
                         <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
-                            <a onclick="clearFavorites(); document.location=\'infomap.php?reload=true\';" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/reload.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("reloadData") . '</span></a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
                             <a href="https://www.facebook.com/KhoraAthens/" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/facebook.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;KHORA FACEBOOK</span></a>
                         </td>
                     </tr>
@@ -306,6 +301,11 @@
                     <tr>
                         <td id="switchToDesktop" style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
                             <a href="' . basename($_SERVER['PHP_SELF']) . '?mobile=false" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/computer.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("desktopVersion") . '</span></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
+                            <!-- <a onclick="clearFavorites(); document.location=\'infomap.php?reload=true\';" style="color: #555555; text-decoration: none;">&nbsp;<img src="img/reload.png" style="width: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&nbsp;' . i18n("reloadData") . '</span></a> -->
                         </td>
                     </tr>
                 </table>
