@@ -14,7 +14,7 @@ Do not include these files/folders:
  - README.MD
  
 # Configuration
-Create a folder called "config" on the top level where the website is deployed.
+Create a folder called "config" in the "infomap" folder.
 Create the following files in it:
  - arabicGid.txt
  - englishGid.txt
