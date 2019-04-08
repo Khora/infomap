@@ -7,7 +7,7 @@ Create a target folder on the PHP enabled webserver on which the system shall ru
 Place that folder under where files are served by the webserver so it is accessible via http.
 Name that folder "infomap".
 Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writeable by the webserver (via chmod).
-Download the files from this repository (Khora/infomap) according to the picture on any PHP webserver.
+Download the files from this repository (Khora/infomap) and place them in the newly created "infomap" folder.
 Do not include these files/folders:
  - INFOMAPS-MOCKS
  - .gitignore
