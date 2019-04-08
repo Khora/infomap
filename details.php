@@ -25,13 +25,25 @@
         <div id="content" style='top: 200px;'>
             <?php
                 echo "<table style='margin-bottom: 10px;'>
-                        <td style='padding: 10px; padding-left: 5mm;'>
-                            " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
-                        </td>
+                        <tr>
+                            <td style='padding: 10px; padding-left: 5mm;'>
+                                " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
+                            </td>
+                            <td style='padding: 10px; padding-left: 5mm; position: absolute; right: 75mm;'>
+                                " . getButton(i18n("reportIncorrectData"), "img/reportIncorrectData.png", "document.location='details.php?id=" . $id . "&reportIncorrectDataId=" . $id . "';") . "
+                            </td>
+                        </tr>
                     </table>";
                 
                 if ($id != -1) {
                     $details = getDetailsContentFromSpreadsheet($id);
+                    
+                    // send an e-mail if someone marked this data as incorrect
+                    if (isset($_GET["reportIncorrectDataId"])) {
+                        reportDataAsIncorrect($id, $details['name']);
+                        echo "<h2 style='color: green;'>&nbsp;&nbsp;&nbsp;" . i18n("reportIncorrectDataDone") . "</h2>";
+                    }
+                    
                     $isFavorite = true;
                     $starSrc = "img/starInactive.png";
                     if ($isFavorite) {

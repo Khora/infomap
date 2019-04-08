@@ -52,6 +52,10 @@
         $_SESSION["spreadsheetUrlUrdu"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $urduGid;
         $_SESSION["spreadsheetUrlKurdish"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $kurdishGid;
         
+        // e-mail address for reporting incorrect data
+        $_SESSION["senderEmailAddress"] = getFileContent("config/senderEmailAddress.txt");
+        $_SESSION["emailAddressesIncorrectData"] = getFileContent("config/emailAddressesIncorrectData.txt");
+        
         // get if the client is a mobile device
         $mobile = "false";
         if (isset($_SESSION["mobile"])) {
@@ -194,7 +198,7 @@
                 <table style="width: 100%; text-align: right;" onmouseleave="document.getElementById(\'languageTextField\').innerHTML=\'&nbsp;\'">
                     <tr>
                         <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=English"><img src="img/britainFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     English     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
-                        <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=Greek"><img src="img/greeceFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     &#x3B5;&#x3BB;&#x3BB;&#x3B7;&#x3BD;&#x3B9;&#x3BA;&#x3AC; (Greek)     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
+                        <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=Greek"><img src="img/greeceFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     &#x395;&#x3BB;&#x3BB;&#x3B7;&#x3BD;&#x3B9;&#x3BA;&#x3AC; (Greek)     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
                         <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=French"><img src="img/franceFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     Fran&#xE7;ais (French)     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
                         <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=Farsi"><img src="img/afghanistanFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     &#x641;&#x627;&#x631;&#x633;&#x6CC; (Farsi)     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
                         <td><a href="' . basename($_SERVER['PHP_SELF']) . '?language=Arabic"><img src="img/syriaFlag.png" style="height: 30px;" onmouseover="document.getElementById(\'languageTextField\').innerHTML=\'&#x25A0;&#x25A0;&#x25A0;     &#x627;&#x644;&#x639;&#x64E;&#x631;&#x64E;&#x628;&#x650;&#x64A;&#x64E;&#x651;&#x629;&#x200E; (Arabic)     &#x25A0;&#x25A0;&#x25A0;\';"></a></td>
@@ -246,7 +250,7 @@
                     </tr>
                     <tr>
                         <td style="height: 10mm; vertical-align: middle; border-color: #ffffff;">
-                            <a href="' . basename($_SERVER['PHP_SELF']) . '?language=Greek" style="color: #555555; text-decoration: none;"><img src="img/greeceFlag.png" style="height: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&#x3B5;&#x3BB;&#x3BB;&#x3B7;&#x3BD;&#x3B9;&#x3BA;&#x3AC; (Greek)</span></a>
+                            <a href="' . basename($_SERVER['PHP_SELF']) . '?language=Greek" style="color: #555555; text-decoration: none;"><img src="img/greeceFlag.png" style="height: 8mm; vertical-align: middle;"><span style="font-size: 5mm;">&nbsp;&nbsp;&nbsp;&#x395;&#x3BB;&#x3BB;&#x3B7;&#x3BD;&#x3B9;&#x3BA;&#x3AC; (Greek)</span></a>
                         </td>
                     </tr>
                     <tr>
@@ -460,6 +464,26 @@
             "type" => $type,
             "division" => $division,
             "dateLastUpdated" => $dateLastUpdated);
+    }
+    
+    function reportDataAsIncorrect($id, $name) {
+        $sender = $_SESSION["senderEmailAddress"];
+        $emailAddresses = explode(",", $_SESSION["emailAddressesIncorrectData"]);
+        for ($i = 0; $i < count($emailAddresses); $i++) {
+            $emailAddress = $emailAddresses[$i];
+			$to = $emailAddress;
+			$subject = "Khora infomap - incorrect data set - ID: " . $id;
+			$message = "Hello,\r\n\r\nyou are a recipient of the Khora infomap site system e-mails. Someone reported this data set as incorrect: ID: " . $id . " (" . $name . ")" . ".\r\nPlease check the correctness of the data via their Website, Facebook or go there in person or call them.\r\n\r\nGreetings,\r\nThe Khora infomap system";
+            $header = join("\r\n", array(
+               'From: ' . $sender,
+               'Reply-To: ' . $sender,
+               'Return-Path: ' . $sender, 
+               'X-Mailer: PHP',
+               'Content-type: text/plain; charset=utf-8'
+            ));
+            $messageToSend = html_entity_decode(utf8_decode($message));
+            mail($to, $subject, $messageToSend, $header, '-f ' . $sender);
+        }
     }
     
     function mapquestGeocodeApiAddressToLocation($addressString) {

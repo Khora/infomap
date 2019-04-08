@@ -28,7 +28,9 @@
     "services": "Services",
     "toggleAll": "TOGGLE ALL",
     "toggleMapView":  "TOGGLE MAP VIEW",
-    "website": "Website"
+    "website": "Website",
+    "reportIncorrectData": "REPORT THIS DATA AS INCORRECT",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via e-mail to the maintainers. It will be checked and corrected."
   },
   "Greek": {
     "address": "AddressGreek",
@@ -59,7 +61,9 @@
     "services": "ServicesGreek",
     "toggleAll": "TOGGLE ALLGreek",
     "toggleMapView": "TOGGLE MAP VIEWGreek",
-    "website": "WebsiteGreek"
+    "website": "WebsiteGreek",
+    "reportIncorrectData": "REPORT INCORRECT DATAGreek",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Greek"
   },
   "French": {
     "address": "Adresse",
@@ -90,7 +94,9 @@
     "services": "Services",
     "toggleAll": "TOUT ACTIVER",
     "toggleMapView": "ACTIVER VUE CARTE",
-    "website" : "Site Internet"
+    "website" : "Site Internet",
+    "reportIncorrectData": "REPORT INCORRECT DATAFrench",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.French"
   },
   "Farsi": {
     "address": "AddressFarsi",
@@ -121,7 +127,9 @@
     "services": "ServicesFarsi",
     "toggleAll": "TOGGLE ALLFarsi",
     "toggleMapView": "TOGGLE MAP VIEWFarsi",
-    "website": "WebsiteFarsi"
+    "website": "WebsiteFarsi",
+    "reportIncorrectData": "REPORT INCORRECT DATAFarsi",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Farsi"
   },
   "Arabic": {
     "address": "العنوان",
@@ -152,7 +160,9 @@
     "services": "خدمات",
     "toggleAll": "تبديل الكل",
     "toggleMapView": "تبديل عرض الخريطة",
-    "website": "الموقع على الإنترنت"
+    "website": "الموقع على الإنترنت",
+    "reportIncorrectData": "REPORT INCORRECT DATAArabic",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Arabic"
   },
   "Urdu": {
     "address": "AddressUrdu",
@@ -183,7 +193,9 @@
     "services": "ServicesUrdu",
     "toggleAll": "TOGGLE ALLUrdu",
     "toggleMapView": "TOGGLE MAP VIEWUrdu",
-    "website": "WebsiteUrdu"
+    "website": "WebsiteUrdu",
+    "reportIncorrectData": "REPORT INCORRECT DATAUrdu",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Urdu"
   },
   "Kurdish": {
     "address": "AddressKurdish",
@@ -214,6 +226,8 @@
     "services": "ServicesKurdish",
     "toggleAll": "TOGGLE ALLKurdish",
     "toggleMapView": "TOGGLE MAP VIEWKurdish",
-    "website": "WebsiteKurdish"
+    "website": "WebsiteKurdish",
+    "reportIncorrectData": "REPORT INCORRECT DATAKurdish",
+    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Kurdish"
   }
 }
