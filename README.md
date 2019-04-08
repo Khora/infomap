@@ -6,7 +6,7 @@ The database (a Google Spreadsheet) behind it can be edited by those having the 
 Create a target folder on the PHP enabled webserver on which the system shall run.
 Place that folder under where files are served by the webserver so it is accessible via http.
 Name that folder "infomap".
-Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writable by the webserver.
+Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writeable by the webserver (via chmod).
 Download the files from this repository according to the picture on any PHP webserver.
 Do not include these files/folders:
  - INFOMAPS-MOCKS
