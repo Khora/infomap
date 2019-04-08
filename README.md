@@ -23,6 +23,8 @@ Create the following files in it:
  - pdfShiftIoApiKey.txt
  - spreadsheetId.txt
  - urduGid.txt
+ - emailAddressesIncorrectData.txt
+ - senderEmailAddress.txt
 ## arabicGid.txt
 Put in the sheet ID for the "Arabic" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "272972858"
@@ -55,6 +57,14 @@ e.g. "1O1k_JJMitnFik1h3s5eiA6VjMvuejsqCndJ_ETL8FZd"
 ## urduGid.txt
 Put in the sheet ID for the "Urdu" tab of the Google Spreadsheet containing the data for the infomap.
 e.g. "1531450539"
+## emailAddressesIncorrectData.txt
+Put in the e-mail addresses of all accounts that shall receive system e-mails. The addresses have to be a comma separated list.
+If someone reports an incorrect data set, e-mails will get sent to all addresses mentioned in this file. Then, the responsible people can check the data and correct it if necessary
+e.g. "example1@host1.com,example2@host2.com,example3@host3.com,example4@host4.com"
+## senderEmailAddress.txt
+Put in the e-mail address that shall be the "sender" of all e-mails sent by the infomap system.
+Beware that some hosters have restrictions as to which addresses and especially hostnames may be chosen to be the "sender" addresses of anything sent via PHP.
+e.g. "example1@host1.com"
 
 # cron job to periodically refresh the data cache
 Place a shell script here: "/etc/cron.weekly".
