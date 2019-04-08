@@ -73,9 +73,9 @@ e.g. "example1@host1.com"
 # cron job to periodically refresh the data cache
 Edit the cron jobs on the system with the command "crontab -e".
 Select your favorite editor by entering the corresponding number and pressing enter.
-Add this line to the end of the file and save it: "0 0 * * 0 curl http://khora.social.coop/infomap/infomap.php?reload=true > /dev/null"
+Add this line to the end of the file and save it: "@daily curl http://khora.social.coop/infomap/infomap.php?reload=true > /dev/null"
 This requests the website with the reload cache flag enabled on a weekly basis.
 In doing so, it refreshes the caches and speeds up the system for everyone else.
 
-# Demo System
-Access a demo system here: https://mydearfear.com/infomap/infomap.php
+# Running System
+Access the running system here: http://khora.social.coop/infomap
