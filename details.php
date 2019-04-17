@@ -29,7 +29,7 @@
                             <td style='padding: 10px; padding-left: 5mm;'>
                                 " . getButton(i18n("back"), "img/backArrow.png", "document.location='infomap.php';") . "
                             </td>
-                            <td style='padding: 10px; padding-left: 5mm; position: absolute; right: 75mm;'>
+                            <td style='padding: 10px; padding-left: 5mm; position: absolute; right: 3mm;'>
                                 " . getButton(i18n("reportIncorrectData"), "img/reportIncorrectData.png", "document.location='details.php?id=" . $id . "&reportIncorrectDataId=" . $id . "';") . "
                             </td>
                         </tr>
@@ -44,13 +44,53 @@
                         echo "<h2 style='color: green;'>&nbsp;&nbsp;&nbsp;" . i18n("reportIncorrectDataDone") . "</h2>";
                     }
                     
-                    $isFavorite = true;
-                    $starSrc = "img/starInactive.png";
-                    if ($isFavorite) {
-                        $starSrc = "img/starActive.png";
+                    $websiteString = $details['website'];
+                    $matches = array();
+                    preg_match_all('/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;\(\)]*[-a-z0-9+&@#\/%=~_|\(\)]/i', $websiteString, $matches);
+                    $matches = $matches[0];
+                    for ($i = 0; $i < count($matches); $i++) {
+                        $currentWebsiteString = $matches[$i];
+                        if (strpos($currentWebsiteString, "http") === false) {
+                            $currentWebsiteString = "http://" . $currentWebsiteString;
+                        }
+                        $currentWebsiteString = str_replace("p//", "p://" , $currentWebsiteString);
+                        $currentWebsiteString = str_replace("ps//", "ps://" , $currentWebsiteString);
+                        $websiteString = str_replace($matches[$i], "<a href='" . $currentWebsiteString . "'>" . $matches[$i] . "</a>" , $websiteString);
                     }
+                    $websiteString = str_replace("\n", "<br>", $websiteString);
+                    
+                    $facebookString = $details['facebook'];
+                    $matches = array();
+                    preg_match_all('/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;\(\)]*[-a-z0-9+&@#\/%=~_|\(\)]/i', $facebookString, $matches);
+                    $matches = $matches[0];
+                    for ($i = 0; $i < count($matches); $i++) {
+                        $currentFacebookString = $matches[$i];
+                        if (strpos($currentFacebookString, "http") === false) {
+                            $currentFacebookString = "http://" . $currentFacebookString;
+                        }
+                        $currentFacebookString = str_replace("p//", "p://" , $currentFacebookString);
+                        $currentFacebookString = str_replace("ps//", "ps://" , $currentFacebookString);
+                        $facebookString = str_replace($matches[$i], "<a href='" . $currentFacebookString . "'>" . $matches[$i] . "</a>" , $facebookString);
+                    }
+                    $facebookString = str_replace("\n", "<br>", $facebookString);
+                    
+                    echo "
+                    <script>
+                        function updateIsFavorite() {
+                            if (getFavorites().indexOf(" . $id . ") < 0) {
+                                document.getElementById(\"favoriteStar\").innerHTML = \"<img src='img/starInactive.png'>\";
+                            } else {
+                                document.getElementById(\"favoriteStar\").innerHTML = \"<img src='img/starActive.png'>\";
+                            }
+                        }
+                    </script>";
+                    
                     if (!isMobile()) {
                         echo "<table id='table' class='gridtable' style='margin: 5mm; width: calc(100% - 10mm);'>
+                                <tr>
+                                    <td style=\"color: #000000; background-color: #999999;\">" . i18n("favorite") . "</td>
+                                    <td id=\"favoriteStar\" onClick='toggleFavoritesAndUpdateStarImages([" . $id . "]);updateIsFavorite();' style=\"text-align: center; color: #000000; background-color: #999999;\"><img src='img/starActive.png'></td>
+                                </tr>
                                 <tr>
                                     <th>" . i18n("id") . "</th>
                                     <th>" . $id . "</th>
@@ -105,11 +145,11 @@
                         echo    "</tr>
                                 <tr>
                                     <td>" . i18n("website") . "</td>
-                                    <td><a href='" . $details['website'] . "'>" . $details['website'] . "</td>
+                                    <td>" . $websiteString . "</td>
                                 </tr>
                                 <tr>
                                     <td>" . i18n("facebook") . "</td>
-                                    <td><a href='" . $details['facebook'] . "'>" . $details['facebook'] . "</td>
+                                    <td>" . $facebookString . "</td>
                                 </tr>
                                 <tr>
                                     <td>" . i18n("notes") . "</td>
@@ -128,7 +168,7 @@
                         echo "<table id='table' class='gridtable' style='margin: 5mm; width: calc(100% - 10mm);'>
                                 <tr>
                                     <td style=\"width: 50%; color: #000000; background-color: #999999;\">" . i18n("favorite") . "</td>
-                                    <td id=\"favoriteStar\" style=\"text-align: center; color: #000000; background-color: #999999;\"><img src='img/starActive.png'></td>
+                                    <td id=\"favoriteStar\" onClick='toggleFavoritesAndUpdateStarImages([" . $id . "]);updateIsFavorite();' style=\"text-align: center; color: #000000; background-color: #999999;\"><img src='img/starActive.png'></td>
                                 </tr>
                             </table>
                             
@@ -232,7 +272,7 @@
                                     <th>" . i18n("website") . "</th>
                                 </tr>
                                 <tr>
-                                    <td>" . $details['website'] . "</td>
+                                    <td>" . $websiteString . "</td>
                                 <tr>
                             </table>
                             
@@ -241,7 +281,7 @@
                                     <th>" . i18n("facebook") . "</th>
                                 </tr>
                                 <tr>
-                                    <td>" . $details['facebook'] . "</td>
+                                    <td>" . $facebookString . "</td>
                                 <tr>
                             </table>
                             
@@ -278,12 +318,10 @@
                 
                 echo "
                     <script>
-                        if (getFavorites().indexOf(" . $id . ") < 0) {
-                            document.getElementById(\"favoriteStar\").innerHTML = \"<img src='img/starInactive.png'>\";
-                        }
                         if (isMobileOrTablet()) {
                             document.getElementById(\"content\").style.top = \"70px\";
                         }
+                        updateIsFavorite();
                     </script>";
                     
                 /*
