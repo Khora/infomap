@@ -29,7 +29,7 @@
     "toggleAll": "TOGGLE ALL",
     "toggleMapView":  "TOGGLE MAP VIEW",
     "website": "Website",
-    "reportIncorrectData": "REPORT THIS DATA AS INCORRECT",
+    "reportIncorrectData": "REPORT AS INCORRECT",
     "reportIncorrectDataDone": "The incorrectness of this data has been reported via e-mail to the maintainers. It will be checked and corrected."
   },
   "Greek": {
@@ -62,7 +62,7 @@
     "toggleAll": "TOGGLE ALLGreek",
     "toggleMapView": "TOGGLE MAP VIEWGreek",
     "website": "WebsiteGreek",
-    "reportIncorrectData": "REPORT INCORRECT DATAGreek",
+    "reportIncorrectData": "REPORT AS INCORRECTGreek",
     "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.Greek"
   },
   "French": {
@@ -95,8 +95,8 @@
     "toggleAll": "TOUT ACTIVER",
     "toggleMapView": "ACTIVER VUE CARTE",
     "website" : "Site Internet",
-    "reportIncorrectData": "REPORT INCORRECT DATAFrench",
-    "reportIncorrectDataDone": "The incorrectness of this data has been reported via email to the maintainers.French"
+    "reportIncorrectData": "SIGNALER COMME INCORRECT",
+    "reportIncorrectDataDone": "L'inexactitude de ces données a été rapportée par courrier électronique aux responsables."
   },
   "Farsi": {
     "address": "AddressFarsi",

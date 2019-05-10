@@ -17,7 +17,7 @@ require('lib/lib.php');
                 $idsToExportString = htmlspecialchars($_GET["ids"]);
             }
             
-            $urlForData = "https://$_SERVER[HTTP_HOST]/infomap/exportSource.php?language=" . getLanguage() . "&ids=" . $idsToExportString;
+            $urlForData = getProtocolName() . "://$_SERVER[HTTP_HOST]/infomap/exportSource.php?language=" . getLanguage() . "&ids=" . $idsToExportString;
             $filepath = downloadHtmlToPdf($urlForData);
             echo "Redirecting to the PDF file. If it does not work, click <a href='" . $filepath . "'>here</a>!<br>
             <script>
