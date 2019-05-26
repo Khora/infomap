@@ -7,6 +7,10 @@ Create a target folder on the PHP enabled webserver on which the system shall ru
 Place that folder under where files are served by the webserver so it is accessible via http.
 Name that folder "infomap".
 Create a folder called "downloads" within that "infomap" folder and make the "downloads" folder writeable by the webserver (via chmod).
+
+order deny,allow
+deny from all
+
 Download the files from this repository (Khora/infomap) and place them in the newly created "infomap" folder.
 Do not include these files/folders:
  - INFOMAPS-MOCKS
@@ -16,59 +20,59 @@ Do not include these files/folders:
 # Configuration
 Create a folder called "config" in the "infomap" folder.
 Create the following files in it:
- - arabicGid.txt
- - englishGid.txt
- - farsiGid.txt
- - frenchGid.txt
- - greekGid.txt
- - kurdishGid.txt
- - mapboxApiToken.txt
- - mapQuestApiKey.txt
- - pdfShiftIoApiKey.txt
- - spreadsheetId.txt
- - urduGid.txt
- - emailAddressesIncorrectData.txt
- - senderEmailAddress.txt
-## arabicGid.txt
+ - arabicGid.php
+ - englishGid.php
+ - farsiGid.php
+ - frenchGid.php
+ - greekGid.php
+ - kurdishGid.php
+ - mapboxApiToken.php
+ - mapQuestApiKey.php
+ - pdfShiftIoApiKey.php
+ - spreadsheetId.php
+ - urduGid.php
+ - emailAddressesIncorrectData.php
+ - senderEmailAddress.php
+## arabicGid.php
 Put in the sheet ID for the "Arabic" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "272972858"
-## englishGid.txt
+e.g. <?php $arabicGid = "272972858"; ?>
+## englishGid.php
 Put in the sheet ID for the "English" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "0"
-## farsiGid.txt
+e.g. <?php $englishGid = "0"; ?>
+## farsiGid.php
 Put in the sheet ID for the "Farsi" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "2092257293"
-## frenchGid.txt
+e.g. <?php $farsiGid = "2092257293"; ?>
+## frenchGid.php
 Put in the sheet ID for the "French" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "2011609971"
-## greekGid.txt
+e.g. <?php $frenchGid = "2011609971"; ?>
+## greekGid.php
 Put in the sheet ID for the "Greek" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "1538519839"
-## kurdishGid.txt
+e.g. <?php $greekGid = "1538519839"; ?>
+## kurdishGid.php
 Put in the sheet ID for the "Kurdish" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "1847047387"
-## mapboxApiToken.txt
+e.g. <?php $kurdishGid = "1847047387"; ?>
+## mapboxApiToken.php
 Put in a mapbox API token so the system can use the mapbox API.
-e.g. "pk.r53IjoiY2FlemUiLCIfaTbXo8ptdXp6d3QyMGpweDN3bzhweTZ5IjqqXpG7.Si72Tah5nyXFljhdfiSY9yg"
-## mapQuestApiKey.txt
+e.g. <?php $mapboxApiToken = "pk.r53IjoiY2FlemUiLCIfaTbXo8ptdXp6d3QyMGpweDN3bzhweTZ5IjqqXpG7.Si72Tah5nyXFljhdfiSY9yg"; ?>
+## mapQuestApiKey.php
 Put in a MapQuest API token so the system can use the MapQuest API.
-e.g. "3AAl4n9UOgMZB7dBO8hj1igYC4JZwwKh"
-## pdfShiftIoApiKey.txt
-e.g. "13e86817fee24b56b932a1585ca3e96a"
-## spreadsheetId.txt
+e.g. <?php $mapQuestApiKey = "3AAl4n9UOgMZB7dBO8hj1igYC4JZwwKh"; ?>
+## pdfShiftIoApiKey.php
+e.g. <?php $pdfShiftIoApiKey = "13e86817fee24b56b932a1585ca3e96a"; ?>
+## spreadsheetId.php
 Put in the Google Spreadsheet ID containing the data for the infomap.
-e.g. "1O1k_JJMitnFik1h3s5eiA6VjMvuejsqCndJ_ETL8FZd"
-## urduGid.txt
+e.g. <?php $spreadsheetId = "1O1k_JJMitnFik1h3s5eiA6VjMvuejsqCndJ_ETL8FZd"; ?>
+## urduGid.php
 Put in the sheet ID for the "Urdu" tab of the Google Spreadsheet containing the data for the infomap.
-e.g. "1531450539"
-## emailAddressesIncorrectData.txt
+e.g. <?php $urduGid = "1531450539"; ?>
+## emailAddressesIncorrectData.php
 Put in the e-mail addresses of all accounts that shall receive system e-mails. The addresses have to be a comma separated list.
 If someone reports an incorrect data set, e-mails will get sent to all addresses mentioned in this file. Then, the responsible people can check the data and correct it if necessary
-e.g. "example1@host1.com,example2@host2.com,example3@host3.com,example4@host4.com"
-## senderEmailAddress.txt
+e.g. <?php $emailAddressesIncorrectData = "example1@host1.com,example2@host2.com,example3@host3.com,example4@host4.com"; ?>
+## senderEmailAddress.php
 Put in the e-mail address that shall be the "sender" of all e-mails sent by the infomap system.
 Beware that some hosters have restrictions as to which addresses and especially hostnames may be chosen to be the "sender" addresses of anything sent via PHP.
-e.g. "example1@host1.com"
+e.g. <?php $senderEmailAddress = "example1@host1.com"; ?>
 
 # cron job to periodically refresh the data cache
 Edit the cron jobs on the system with the command "crontab -e".

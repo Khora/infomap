@@ -1,4 +1,19 @@
 <?php
+    // include configs
+    include "config/spreadsheetId.php";
+    include "config/englishGid.php";
+    include "config/arabicGid.php";
+    include "config/farsiGid.php";
+    include "config/greekGid.php";
+    include "config/frenchGid.php";
+    include "config/urduGid.php";
+    include "config/kurdishGid.php";
+    include "config/mapboxApiToken.php";
+    include "config/mapQuestApiKey.php";
+    include "config/pdfShiftIoApiKey.php";
+    include "config/senderEmailAddress.php";
+    include "config/emailAddressesIncorrectData.php";
+        
     // set max exec time to infinity
     set_time_limit(0);
     
@@ -17,21 +32,25 @@
         // cache for the lat long geocoded positions of addresses
         $_SESSION["dataCacheGeocodedPositionOfAddresses"] = "downloads/idsToAdressLocationsMapping.json";
         
-        // data source
-        $spreadsheetId = getFileContent("config/spreadsheetId.txt");
-        $englishGid = getFileContent("config/englishGid.txt");
-        $arabicGid = getFileContent("config/arabicGid.txt");
-        $farsiGid = getFileContent("config/farsiGid.txt");
-        $greekGid = getFileContent("config/greekGid.txt");
-        $frenchGid = getFileContent("config/frenchGid.txt");
-        $urduGid = getFileContent("config/urduGid.txt");
-        $kurdishGid = getFileContent("config/kurdishGid.txt");
+        // make all needed variable global
+        global $spreadsheetId;
+        global $mapboxApiToken;
+        global $mapQuestApiKey;
+        global $pdfShiftIoApiKey;
+        global $englishGid;
+        global $arabicGid;
+        global $farsiGid;
+        global $greekGid;
+        global $frenchGid;
+        global $urduGid;
+        global $kurdishGid;
+        global $senderEmailAddress;
+        global $emailAddressesIncorrectData;
         
         // api keys
-        $_SESSION["mapboxApiToken"] = getFileContent("config/mapboxApiToken.txt");
-        $_SESSION["mapQuestApiKey"] = getFileContent("config/mapQuestApiKey.txt");
-        $_SESSION["pdfShiftIoApiKey"] = getFileContent("config/pdfShiftIoApiKey.txt");
-        
+        $_SESSION["mapboxApiToken"] = $mapboxApiToken;
+        $_SESSION["mapQuestApiKey"] = $mapQuestApiKey;
+        $_SESSION["pdfShiftIoApiKey"] = $pdfShiftIoApiKey;
         
         // where to save the data cache to
         $_SESSION["dataCacheFilePathEnglish"] = "downloads/currentDataCacheEnglish.csv";
@@ -53,8 +72,8 @@
         $_SESSION["spreadsheetUrlKurdish"] = "https://docs.google.com/spreadsheets/d/" . $spreadsheetId . "/export?format=csv&gid=" . $kurdishGid;
         
         // e-mail address for reporting incorrect data
-        $_SESSION["senderEmailAddress"] = getFileContent("config/senderEmailAddress.txt");
-        $_SESSION["emailAddressesIncorrectData"] = getFileContent("config/emailAddressesIncorrectData.txt");
+        $_SESSION["senderEmailAddress"] = $senderEmailAddress;
+        $_SESSION["emailAddressesIncorrectData"] = $emailAddressesIncorrectData;
         
         // get if the client is a mobile device
         $mobile = "false";
